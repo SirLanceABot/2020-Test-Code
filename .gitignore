@@ -35,6 +35,9 @@
 *.app
 
 ### Java ###
+# Ignore the files that will have merge conflicts
+Robot.java
+
 # Compiled class file
 *.class
 
