@@ -1,7 +1,9 @@
 package frc.robot;
 
 // --------------------------------------------------------------------------- //
-// --- ONLY IMPORT ONE OF THE FOLLOWING PACKAGES ----------------------------- //
+//     ONLY IMPORT ONE OF THE FOLLOWING PACKAGES                               //
+//     DO NOT MAKE ANY OTHER CHANGES TO THIS FILE                              //
+// --------------------------------------------------------------------------- //
 
 //import frc.annika.*;
 //import frc.darren.*;
@@ -11,7 +13,6 @@ package frc.robot;
 //import frc.jwood.*;
 import frc.maxwell.*;
 
-// --------------------------------------------------------------------------- //
 // --------------------------------------------------------------------------- //
 
 import edu.wpi.first.wpilibj.TimedRobot;
