@@ -4,7 +4,10 @@ public class MyRobot
 {
     public void robot()
     {
+        System.out.println(this.getClass().getName() + " : Started Constructor");
+        System.out.println("*** ELLIOT's Test Code ***");
 
+        System.out.println(this.getClass().getName() + " : Finished Constructor");
     }
 
     public void robotInit()
