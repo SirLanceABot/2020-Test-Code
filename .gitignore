@@ -36,7 +36,7 @@
 
 ### Java ###
 # Ignore the files that will have merge conflicts
-Robot.java
+#Robot.java
 
 # Compiled class file
 *.class
