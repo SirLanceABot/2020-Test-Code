@@ -2,6 +2,8 @@ package frc.elliot;
 
 public class MyRobot
 {
+    private static ShooterTest shooter = new ShooterTest();
+
     public void robot()
     {
         System.out.println(this.getClass().getName() + " : Started Constructor");
@@ -37,7 +39,7 @@ public class MyRobot
 
     public void teleopPeriodic()
     {
-
+        shooter.teleopPeriodic();
     }
 
     public void testInit()
