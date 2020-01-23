@@ -5,11 +5,7 @@ import frc.jwood.shuffleboard.AutonomousTab.AutonomousTabData;
 public class MainShuffleboard
 {
     private AutonomousTab autonomousTab = AutonomousTab.getInstance();
-    private AutonomousTabData autonomousTabData;
-
     private DriverControllerTab driverControllerTab = DriverControllerTab.getInstance();
-
-    private boolean isNewAutonomousDataAvailable = true;
 
     private static MainShuffleboard instance = new MainShuffleboard();
 
@@ -27,35 +23,22 @@ public class MainShuffleboard
         return instance;
     }
 
-    public void updateAutonomousTabData()
-    {
-        boolean isSendDataButtonPressed = autonomousTab.getSendDataButton();
-
-        if (isSendDataButtonPressed && isNewAutonomousDataAvailable)
-        {
-            // Get values from the Combo Boxes
-            autonomousTabData = autonomousTab.getAutonomousTabData();
-
-            System.out.println(autonomousTabData);
-
-            isNewAutonomousDataAvailable = false;
-        }
-        
-        if (!isSendDataButtonPressed && !isNewAutonomousDataAvailable)
-        {
-            isNewAutonomousDataAvailable = true;
-        }
-    }
-
+    // ----------------------------------------------------------------------------------
+    // AUTONOMOUS TAB
     public AutonomousTabData getAutonomousTabData()
     {
-        return autonomousTabData;
+        return autonomousTab.getAutonomousTabData();
     }
 
+    public void checkForNewAutonomousTabData()
+    {
+        autonomousTab.checkForNewAutonomousTabData();
+    }
+
+    // ------------------------------------------------------------------------------------
+    // DRIVER CONTROLLER TAB
     public void setDriverControllerSettings()
     {
-        //leftXAxisSettings = driverControllerTab.getAxisSettingsData();
-
-        driverControllerTab.setAxisSettings();
+        driverControllerTab.setDriverControllerAxisSettings();
     }
 }

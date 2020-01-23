@@ -67,7 +67,7 @@ public class MyRobot
     {
         if(isPreAutonomous)
         {
-            mainShuffleboard.getAutonomousTabData();
+            mainShuffleboard.checkForNewAutonomousTabData();
         }
     }
 

@@ -24,6 +24,8 @@ public class AutonomousTab
     {
         public StartingLocation startingLocation = StartingLocation.kNone;
         public ShootPowerCell shootPowerCell = ShootPowerCell.kYes;
+
+        // TODO: Add the other autonomous options
         
         @Override
         public String toString()
@@ -48,8 +50,13 @@ public class AutonomousTab
     private SendableChooser<StartingLocation> startingLocationComboBox = new SendableChooser<>();
     private SendableChooser<ShootPowerCell> shootPowerCellComboBox = new SendableChooser<>();
 
+    // TODO: Add the other autonomous options
+
+
     // Create the Button object
     private SendableChooser<Boolean> sendDataButton = new SendableChooser<>();
+
+    private boolean previousStateOfSendButton = false;
 
     private static AutonomousTab instance = new AutonomousTab();
 
@@ -59,8 +66,9 @@ public class AutonomousTab
 
         createStartingLocationComboBox();
         createShootPowerCellComboBox();
+        // TODO: Call the other methods to create the autonomous widgets
 
-        createSendDataSplitButtonChooser();
+        createSendDataButton();
 
         System.out.println(this.getClass().getName() + ": Finished Constructor");
     }
@@ -108,11 +116,13 @@ public class AutonomousTab
             .withSize(4, 2);
     }
 
+    // TODO: Add methods for the other autonomous widgets
+
     /**
      * <b>Send Data</b> Button
      * <p>Create an entry in the Network Table and add the Button to the Shuffleboard Tab
      */
-    private void createSendDataSplitButtonChooser()
+    private void createSendDataButton()
     {
         SendableRegistry.add(sendDataButton, "Send Data");
         SendableRegistry.setName(sendDataButton, "Send Data");
@@ -122,19 +132,42 @@ public class AutonomousTab
 
         autonomousTab.add(sendDataButton)
             .withWidget(BuiltInWidgets.kSplitButtonChooser)
-            .withPosition(23, 9)
+            .withPosition(9, 9)
             .withSize(4, 2);
+    }
+
+    private void updateAutonomousTabData()
+    {
+        autonomousTabData.startingLocation = startingLocationComboBox.getSelected();
+        autonomousTabData.shootPowerCell = shootPowerCellComboBox.getSelected();
+    }
+
+    public void checkForNewAutonomousTabData()
+    {
+        boolean isSendDataButtonPressed = getSendDataButton();
+
+        if(isSendDataButtonPressed && !previousStateOfSendButton)
+        {
+            previousStateOfSendButton = true;
+
+            // Get values from the Combo Boxes
+            updateAutonomousTabData();
+
+            System.out.println(autonomousTabData);
+        }
+        
+        if (!isSendDataButtonPressed && previousStateOfSendButton)
+        {
+            previousStateOfSendButton = false;
+        }
     }
 
     public AutonomousTabData getAutonomousTabData()
     {
-        autonomousTabData.startingLocation = startingLocationComboBox.getSelected();
-        autonomousTabData.shootPowerCell = shootPowerCellComboBox.getSelected();
-
         return autonomousTabData;
     }
 
-    public boolean getSendDataButton()
+    private boolean getSendDataButton()
     {
         return sendDataButton.getSelected();
     }
