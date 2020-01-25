@@ -1,7 +1,6 @@
 package frc.darren;
 
 import edu.wpi.first.wpilibj.Timer;
-import frc.darren.Xbox.Button;
 
 public class MyRobot
 {
