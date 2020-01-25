@@ -2,7 +2,7 @@ package frc.elliot;
 
 public class MyRobot
 {
-    private static ShooterTest shooter = new ShooterTest();
+    //private static ShooterTest shooter = new ShooterTest();
 
     public void robot()
     {
@@ -39,7 +39,7 @@ public class MyRobot
 
     public void teleopPeriodic()
     {
-        shooter.teleopPeriodic();
+        //shooter.teleopPeriodic();
     }
 
     public void testInit()
