@@ -9,16 +9,16 @@ public class Roller
 {
 
     private static final int MASTER_MOTOR_ID = 4;
-    //private static final int SLAVE_MOTOR_ID = 1;
+    //private static final int SLAVE_MOTOR_ID = 2;
 
-    private static final double kP = 5e-5; 
-    private static final double kI = 1e-6;
+    private static final double kP = 0.00038; 
+    private static final double kI = 0.000000005;
     private static final double kD = 0; 
     private static final double kIz = 0; 
-    private static final double kFF = 0; 
+    private static final double kFF = 0.000075; 
     private static final double kMaxOutput = 1; 
     private static final double kMinOutput = -1;
-    private static final double maxRPM = 2000;
+    private static final double maxRPM = 1000;
 
     private static CANSparkMax masterMotor = new CANSparkMax(MASTER_MOTOR_ID, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
     //private static CANSparkMax slaveMotor = new CANSparkMax(SLAVE_MOTOR_ID, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -78,10 +78,10 @@ public class Roller
         return encoder.getVelocity();
     }
 
-    private void setSpeed(double speed)
+    public void setSpeed(double speed)
     {
         double rpmSpeed = speed * maxRPM;
         pidController.setReference(rpmSpeed, ControlType.kVelocity);
-        System.out.println(rpmSpeed);
+        System.out.println(getEncoderVelocity());
     }
 }
