@@ -1,7 +1,13 @@
 package frc.darren;
 
+import edu.wpi.first.wpilibj.Timer;
+import frc.darren.Xbox.Button;
+
 public class MyRobot
 {
+    private static Wrist wrist = Wrist.getInstance();
+    private static Xbox xbox = new Xbox(0);
+
     public void robot()
     {
         System.out.println(this.getClass().getName() + " : Started Constructor");
@@ -32,11 +38,22 @@ public class MyRobot
 
     public void teleopInit()
     {
-
+        System.out.println("Synchronizing pneumatics");
+        wrist.lower();
+        Timer.delay(1.0);
+        wrist.raise();
     }
 
     public void teleopPeriodic()
     {
+        if(xbox.getRawButton(Xbox.Button.kA))
+        {
+            wrist.lower();
+        }
+        else if(xbox.getRawButton(Xbox.Button.kB))
+        {
+            wrist.raise();
+        }
 
     }
 
