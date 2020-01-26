@@ -2,6 +2,21 @@ package frc.jwood.shuffleboard;
 
 import frc.jwood.shuffleboard.AutonomousTab.AutonomousTabData;
 
+/**
+ * The MainShuffleboard class will be the main interface to access the other tabs on the Shuffleboard.
+ * 
+ * <p><b>Shuffleboard Settings</b>
+ * <ul>
+ * <li>Open the Shuffleboard</li>
+ * <li>Open the File menu and select Preferences</li>
+ * <li>Select App Settings on the left (if not already selected)</li>
+ * <li>Under Tab Setting on the right, set the Default Tile Size to 32</li>
+ * <li>Select a tab under Tabs on the left</li>
+ * <li>Under Layout on the right, set Tile Size to 32, 
+ * set Horizontal Spacing to 16, 
+ * set Vertical Spacing to 16</li>
+ * </ul>
+ */
 public class MainShuffleboard
 {
     private AutonomousTab autonomousTab = AutonomousTab.getInstance();
