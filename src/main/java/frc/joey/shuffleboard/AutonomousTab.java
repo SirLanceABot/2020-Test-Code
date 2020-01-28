@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SendableRegistry;
 
+
 public class AutonomousTab
 {
     // Create enumerated types for each Combo Box
@@ -22,7 +23,12 @@ public class AutonomousTab
 
     public enum InitiationLine
     {
-        kTowardPowerPort, kTowardRendezvousPoint;
+        kNone, kTowardPowerPort, kTowardRendezvousPoint;
+    }
+
+    public enum PickUpPowerCell
+    {
+        kYes, kNo;
     }
 
     // Create a class to hold the data on the Shuffleboard tab
@@ -30,7 +36,8 @@ public class AutonomousTab
     {
         public StartingLocation startingLocation = StartingLocation.kNone;
         public ShootPowerCell shootPowerCell = ShootPowerCell.kYes;
-        public InitiationLine initiationLine = InitiationLine.kTowardPowerPort;
+        public InitiationLine initiationLine = InitiationLine.kNone;
+        public PickUpPowerCell pickUpPowerCell = PickUpPowerCell.kNo;
 
         // TODO: Add the other autonomous options
         
@@ -43,6 +50,7 @@ public class AutonomousTab
             str += "Starting Location: " + startingLocation + "\n";
             str += "Shoot Power Cell : " + shootPowerCell + "\n";
             str += "Direction to Move Off Initiation Line : " + initiationLine + "\n";
+            str += "Pick Up Power Cell After Shooting : " + pickUpPowerCell + "\n";
 
             return str;
         }
@@ -58,6 +66,7 @@ public class AutonomousTab
     private SendableChooser<StartingLocation> startingLocationComboBox = new SendableChooser<>();
     private SendableChooser<ShootPowerCell> shootPowerCellComboBox = new SendableChooser<>();
     private SendableChooser<InitiationLine> initiationLineComboBox = new SendableChooser<>();
+    private SendableChooser<PickUpPowerCell> pickUpPowerCellComboBox = new SendableChooser<>();
 
     // TODO: Add the other autonomous options
 
@@ -75,7 +84,9 @@ public class AutonomousTab
 
         createStartingLocationComboBox();
         createShootPowerCellComboBox();
-        createDirectionToMoveOffInitiationLineComboBox();
+        createInitiationLineComboBox();
+        createPickUpPowerCellComboBox();
+
         // TODO: Call the other methods to create the autonomous widgets
 
         createSendDataButton();
@@ -126,23 +137,49 @@ public class AutonomousTab
             .withSize(4, 2);
     }
 
-    private void createDirectionToMoveOffInitiationLineComboBox()
+    /**
+    * <b>Initiation Line</b> Combo Box
+    * <p>Create an entry in the Network Table and add the Combo Box to the Shuffleboard Tab
+    */
+    private void createInitiationLineComboBox()
     {
         //create and name the Combo Box
-        SendableRegistry.add(initiationLineComboBox, "Direction to Move Off Initiation Line");
-        SendableRegistry.setName(initiationLineComboBox, "Direction to Move Off Initiation Line");
+        SendableRegistry.add(initiationLineComboBox, "Move Off Initiation Line");
+        SendableRegistry.setName(initiationLineComboBox, "Move Off Initiation Line");
 
         //add options to Combo Box
         //two lines??
-        initiationLineComboBox.setDefaultOption("Toward Rendezvous Point (default)", InitiationLine.kTowardRendezvousPoint);
+        initiationLineComboBox.setDefaultOption("None (default)", InitiationLine.kNone);
+        initiationLineComboBox.addOption("Toward Rendezvous Point", InitiationLine.kTowardRendezvousPoint);
         initiationLineComboBox.addOption("Toward Power Port", InitiationLine.kTowardPowerPort);
-
+        
         //put the widget on the shuffleboard
         autonomousTab.add(initiationLineComboBox)
             .withWidget(BuiltInWidgets.kComboBoxChooser)
-            .withPosition(0, 5)
+            .withPosition(0, 6)
             .withSize(4, 2);
     
+    }
+
+    /**
+    * <b>Initiation Line</b> Combo Box
+    * <p>Create an entry in the Network Table and add the Combo Box to the Shuffleboard Tab
+    */
+    private void createPickUpPowerCellComboBox()
+    {
+        //create and name the Combo Box
+        SendableRegistry.add(pickUpPowerCellComboBox, "Pick Up Power Cell\n After Shooting");
+        SendableRegistry.setName(pickUpPowerCellComboBox, "Pick Up Power Cell\n After Shooting");
+
+        //add options to Combo Box
+        pickUpPowerCellComboBox.setDefaultOption("No (default)", PickUpPowerCell.kNo);
+        pickUpPowerCellComboBox.addOption("Yes", PickUpPowerCell.kYes);
+
+        //put the widget on the shuffleboard
+        autonomousTab.add(pickUpPowerCellComboBox)
+            .withWidget(BuiltInWidgets.kComboBoxChooser)
+            .withPosition(0, 9)
+            .withSize(4, 2);
     }
     // TODO: Add methods for the other autonomous widgets
 
@@ -168,6 +205,8 @@ public class AutonomousTab
     {
         autonomousTabData.startingLocation = startingLocationComboBox.getSelected();
         autonomousTabData.shootPowerCell = shootPowerCellComboBox.getSelected();
+        autonomousTabData.initiationLine = initiationLineComboBox.getSelected();
+        autonomousTabData.pickUpPowerCell = pickUpPowerCellComboBox.getSelected();
         //TODO: add other bois
     }
 

@@ -1,7 +1,7 @@
 package frc.joey;
 
-import frc.jwood.controls.DriverController;
-import frc.jwood.shuffleboard.MainShuffleboard;
+import frc.joey.controls.DriverController;
+import frc.joey.shuffleboard.MainShuffleboard;
 
 public class MyRobot
 {

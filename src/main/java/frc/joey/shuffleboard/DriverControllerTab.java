@@ -1,6 +1,6 @@
 package frc.joey.shuffleboard;
 
-import frc.jwood.controls.DriverController;
+import frc.joey.controls.DriverController;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
