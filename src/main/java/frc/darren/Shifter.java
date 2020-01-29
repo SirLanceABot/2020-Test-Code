@@ -26,7 +26,7 @@ public class Shifter
     // private static DoubleSolenoid shifterSolenoidRight = new DoubleSolenoid(SHIFTER_SOLENOID_RIGHT_EXTEND_PORT, SHIFTER_SOLENOID_RIGHT_RETRACT_PORT);
 
     private ShifterState shifterState = ShifterState.kLowGear; // TODO: Check defaul position
-    private static Timer timer;
+    private static Timer timer = new Timer();;
     private double shiftingUpTimeOut = 1.0;
     private double shiftingDownTimeOut = 1.0;
 
@@ -35,7 +35,6 @@ public class Shifter
     private Shifter()
     {
         System.out.println(this.getClass().getName() + ": Started Constructing");
-        timer = new Timer();
         System.out.println(this.getClass().getName() + ": Finished Constructing");
     }
 

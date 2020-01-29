@@ -26,7 +26,7 @@ public class Wrist
     // private static DoubleSolenoid wristSolenoidRight = new DoubleSolenoid(WRIST_SOLENOID_RIGHT_EXTEND_PORT, WRIST_SOLENOID_RIGHT_RETRACT_PORT);
 
     private WristState wristState = WristState.kUp;
-    private static Timer timer;
+    private static Timer timer = new Timer();
     private double loweringTimeOut = 1.0;
     private double raisingTimeOut = 1.0;
 
@@ -35,7 +35,6 @@ public class Wrist
     private Wrist()
     {
         System.out.println(this.getClass().getName() + ": Started Constructing");
-        timer = new Timer();
         System.out.println(this.getClass().getName() + ": Finished Constructing");
     }
 
