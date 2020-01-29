@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.Timer;
  * Class for controlling the Wrist of the Intake system.
  * @author Darren Fife
  */
+// TODO: Test if the system works with only one solenoid.
 public class Wrist
 {
     // Constants
@@ -16,13 +17,13 @@ public class Wrist
     };
 
     // TODO: Change these if the solenoids are going in the wrong direction
-    private static final int WRIST_SOLENOID_LEFT_EXTEND_PORT = 1;
-    private static final int WRIST_SOLENOID_LEFT_RETRACT_PORT = 0;
-    private static final int WRIST_SOLENOID_RIGHT_EXTEND_PORT = 2;
-    private static final int WRIST_SOLENOID_RIGHT_RETRACT_PORT = 3;
+    private static final int WRIST_SOLENOID_EXTEND_PORT = 3;
+    private static final int WRIST_SOLENOID_RETRACT_PORT = 2;
+    // private static final int WRIST_SOLENOID_RIGHT_EXTEND_PORT = 2;
+    // private static final int WRIST_SOLENOID_RIGHT_RETRACT_PORT = 3;
 
-    private static DoubleSolenoid wristSolenoidLeft = new DoubleSolenoid(WRIST_SOLENOID_LEFT_EXTEND_PORT, WRIST_SOLENOID_LEFT_RETRACT_PORT);
-    private static DoubleSolenoid wristSolenoidRight = new DoubleSolenoid(WRIST_SOLENOID_RIGHT_EXTEND_PORT, WRIST_SOLENOID_RIGHT_RETRACT_PORT);
+    private static DoubleSolenoid wristSolenoid = new DoubleSolenoid(WRIST_SOLENOID_EXTEND_PORT, WRIST_SOLENOID_RETRACT_PORT);
+    // private static DoubleSolenoid wristSolenoidRight = new DoubleSolenoid(WRIST_SOLENOID_RIGHT_EXTEND_PORT, WRIST_SOLENOID_RIGHT_RETRACT_PORT);
 
     private WristState wristState = WristState.kUp;
     private static Timer timer;
@@ -159,7 +160,7 @@ public class Wrist
      */
     private static void setPneumatics(DoubleSolenoid.Value position)
     {
-        wristSolenoidLeft.set(position);
-        wristSolenoidRight.set(position);
+        wristSolenoid.set(position);
+        // wristSolenoidRight.set(position);
     }
 }
