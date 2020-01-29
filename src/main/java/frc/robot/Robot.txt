@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------- //
-//  1. COPY THIS FILE AND RENAME IT AS "Robot.java"                            //
+//  1. COPY THIS FILE AND AME IT "Robot.java"                            //
 // --------------------------------------------------------------------------- //
 
 package frc.robot;
@@ -9,7 +9,6 @@ package frc.robot;
 //     DO NOT MAKE ANY OTHER CHANGES TO THIS FILE                              //
 // --------------------------------------------------------------------------- //
 
-import frc.zznobodyzz.*;
 //import frc.annika.*;
 //import frc.darren.*;
 //import frc.elliot.*;
@@ -17,6 +16,7 @@ import frc.zznobodyzz.*;
 //import frc.joey.*;
 //import frc.jwood.*;
 //import frc.maxwell.*;
+import frc.zznobodyzz.*;
 
 // --------------------------------------------------------------------------- //
 
