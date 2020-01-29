@@ -10,7 +10,7 @@ public class MyRobot
     
     double newTimeOut = 1.0;
 
-    public void robot()
+    public void myRobot()
     {
         System.out.println(this.getClass().getName() + " : Started Constructor");
         System.out.println("*** DARREN's Test Code ***");

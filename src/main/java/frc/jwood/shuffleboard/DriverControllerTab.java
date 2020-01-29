@@ -33,6 +33,7 @@ public class DriverControllerTab
 
 
     private AxisObjects leftXObjects = new AxisObjects();
+    private AxisObjects leftYObjects = new AxisObjects();
 
     private static DriverControllerTab instance = new DriverControllerTab();
 
@@ -41,6 +42,7 @@ public class DriverControllerTab
         System.out.println(this.getClass().getName() + ": Started Constructor");
 
         createAxisWidgets(DriverController.Axis.kLeftX, leftXObjects, 0);
+        createAxisWidgets(DriverController.Axis.kLeftY, leftYObjects, 4);
 
         // TODO: create the other widgets for the other axes
 
@@ -52,7 +54,7 @@ public class DriverControllerTab
         return instance;
     }
 
-    public void createAxisWidgets(DriverController.Axis axis, AxisObjects axisObjects, int column)
+    private void createAxisWidgets(DriverController.Axis axis, AxisObjects axisObjects, int column)
     {
         int row = 0;
         int width = 4;
@@ -154,6 +156,9 @@ public class DriverControllerTab
 
         axisSettings = getAxisSettingsFromShuffleboard(leftXObjects);
         driverController.setAxisSettings(DriverController.Axis.kLeftX, axisSettings);
+
+        axisSettings = getAxisSettingsFromShuffleboard(leftYObjects);
+        driverController.setAxisSettings(DriverController.Axis.kLeftY, axisSettings);
 
         // TODO: Add the other axes
     }

@@ -9,7 +9,7 @@ public class MyRobot
     private static Roller roller = new Roller();
     private static Xbox xbox = new Xbox(0);
 
-    public void robot()
+    public void myRobot()
     {
         System.out.println(this.getClass().getName() + " : Started Constructor");
         System.out.println("*** ISHAAN's Test Code ***");

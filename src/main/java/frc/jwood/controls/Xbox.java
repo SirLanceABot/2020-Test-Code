@@ -35,19 +35,22 @@ public class Xbox extends Joystick
     {
         kLinear, kSquared, kCubed;
     }
+
     public static final int NUMBER_OF_AXES = 6;
 
     // set the default axis values
     private final double DEFAULT_DEADZONE = 0.1;
+    private final double DEFAULT_MIN_OUTPUT = 0.0;
     private final double DEFAULT_MAX_OUTPUT = 1.0;
     private final boolean DEFAULT_IS_FLIPPED = false;
     private final AxisScale DEFAULT_AXIS_SCALE = AxisScale.kLinear;
 
     //store the default axis values into their own array lists
-    private double[] axisDeadzone = new double[6];
-    private double[] axisMaxOutput = new double[6];
-    private boolean[] axisIsFlipped = new boolean[6];
-    private AxisScale[] axisScale = new AxisScale[6];
+    private double[] axisDeadzone = new double[NUMBER_OF_AXES];
+    private double[] axisMinOutput = new double[NUMBER_OF_AXES];
+    private double[] axisMaxOutput = new double[NUMBER_OF_AXES];
+    private boolean[] axisIsFlipped = new boolean[NUMBER_OF_AXES];
+    private AxisScale[] axisScale = new AxisScale[NUMBER_OF_AXES];
 
     /**
      * Protected constructor for Xbox controller
@@ -58,9 +61,10 @@ public class Xbox extends Joystick
         super(port);
 
         // loop to set the defaults for every axis
-        for(int index = 0; index <= 5; index++)
+        for(int index = 0; index <= NUMBER_OF_AXES - 1; index++)
         {
             axisDeadzone[index] = DEFAULT_DEADZONE;
+            axisMinOutput[index] = DEFAULT_MIN_OUTPUT;
             axisMaxOutput[index] = DEFAULT_MAX_OUTPUT;
             axisIsFlipped[index] = DEFAULT_IS_FLIPPED;
             axisScale[index] = DEFAULT_AXIS_SCALE;
@@ -86,16 +90,24 @@ public class Xbox extends Joystick
         }
         else
         {
+            double dead = axisDeadzone[axis];
+            double min = axisMinOutput[axis];
+            double max = axisMaxOutput[axis];
+            double sign = Math.signum(value);
+
             switch(axisScale[axis])
             {
                 case kLinear:
-                    value = axisMaxOutput[axis] / (1.0 - axisDeadzone[axis]) * (value - axisDeadzone[axis] * Math.signum(value));
+                    value = (max - min) / (1.0 - dead) * (value - dead * sign) + min * sign;
+                    //value = (axisMaxOutput[axis] - axisMinOutput[axis]) / (1.0 - axisDeadzone[axis]) * (value - axisDeadzone[axis] * Math.signum(value)) + axisMinOutput[axis] * Math.signum(value);
                     break;
                 case kSquared:
-                    value = axisMaxOutput[axis] * Math.signum(value) / Math.pow((1.0 - axisDeadzone[axis]), 2) * Math.pow((value - axisDeadzone[axis] * Math.signum(value)), 2);
+                    value = (max - min) * sign / Math.pow(1.0 - dead, 2) * Math.pow(value - dead, 2) + min * sign;
+                    //value = (axisMaxOutput[axis] - axisMinOutput[axis]) * Math.signum(value) / Math.pow((1.0 - axisDeadzone[axis]), 2) * Math.pow((value - axisDeadzone[axis] * Math.signum(value)), 2);
                     break;
                 case kCubed:
-                value = axisMaxOutput[axis] / Math.pow((1.0 - axisDeadzone[axis]), 3) * Math.pow((value - axisDeadzone[axis] * Math.signum(value)), 3);
+                    value = (max - min) / Math.pow(1.0 - dead, 3) * Math.pow(value - dead * sign, 3) + min * sign;
+                    //value = (axisMaxOutput[axis] - axisMinOutput[axis]) / Math.pow((1.0 - axisDeadzone[axis]), 3) * Math.pow((value - axisDeadzone[axis] * Math.signum(value)), 3) + axisMinOutput[axis] * Math.signum(value);
                     break;
             }
         }
@@ -123,6 +135,19 @@ public class Xbox extends Joystick
         axisDeadzone = Math.min(1.0, axisDeadzone);
 
         this.axisDeadzone[axis.value] = axisDeadzone;
+    }
+
+    /**
+     * Public method to manually set an axis min output
+     * @param axis
+     * @param axisMinOutput
+     */
+    public void setAxisMinOutput(Axis axis, double axisMinOutput)
+    {
+        axisMinOutput = Math.abs(axisMinOutput);
+        axisMinOutput = Math.min(axisMinOutput, 1.0);
+
+        this.axisMaxOutput[axis.value] = axisMinOutput;
     }
 
     /**

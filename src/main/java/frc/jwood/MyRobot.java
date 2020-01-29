@@ -10,7 +10,7 @@ public class MyRobot
 
     private boolean isPreAutonomous = true;
     
-    public void robot()
+    public void myRobot()
     {
         System.out.println(this.getClass().getName() + " : Started Constructor");
         System.out.println("*** JWOOD's Test Code ***");

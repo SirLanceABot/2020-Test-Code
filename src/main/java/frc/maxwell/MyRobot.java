@@ -12,7 +12,7 @@ public class MyRobot
     PowerDistributionPanel pdp = new PowerDistributionPanel();
     //private static Turret turret = Turret.getInstance();
     private static Xbox joystick = new Xbox(0);
-    public void robot()
+    public void myRobot()
     {
         System.out.println(this.getClass().getName() + " : Started Constructor");
         System.out.println("*** MAXWELL's Test Code ***");

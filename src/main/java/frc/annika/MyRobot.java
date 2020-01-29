@@ -2,7 +2,7 @@ package frc.annika;
 
 public class MyRobot
 {
-    public void robot()
+    public void myRobot()
     {
         System.out.println(this.getClass().getName() + " : Started Constructor");
         System.out.println("*** ANNIKA's Test Code ***");
