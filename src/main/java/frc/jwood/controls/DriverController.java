@@ -11,6 +11,7 @@ public class DriverController extends Xbox
     public class AxisSettings
     {
         public double axisDeadzone;
+        public double axisMinOutput;
         public double axisMaxOutput;
         public boolean axisIsFlipped;
         public AxisScale axisScale;
@@ -18,12 +19,13 @@ public class DriverController extends Xbox
         public AxisSettings()
         {
             // Call the other constructor with the default values
-            this(0.1, 1.0, false, AxisScale.kLinear);
+            this(0.1, 0.0, 1.0, false, AxisScale.kLinear);
         }
 
-        public AxisSettings(double deadzone, double maxOutput, boolean isFlipped, AxisScale axisScale)
+        public AxisSettings(double deadzone, double minOutput, double maxOutput, boolean isFlipped, AxisScale axisScale)
         {
             this.axisDeadzone = deadzone;
+            this.axisMinOutput = minOutput;
             this.axisMaxOutput = maxOutput;
             this.axisIsFlipped = isFlipped;
             this.axisScale = axisScale;
@@ -35,13 +37,19 @@ public class DriverController extends Xbox
             String str = "";
 
             str += "Deadzone   : " + axisDeadzone + "\n";
+            str += "Min Output : " + axisMinOutput + "\n";
             str += "Max Output : " + axisMaxOutput + "\n";
             str += "Is Flipped : " + axisIsFlipped + "\n"; 
             str += "Axis Scale : " + axisScale + "\n";
 
             return str;
         }
-    }   
+    }
+    
+    public enum DriverButtonControls
+    {
+        kShoot, kClimb;
+    }
 
     // The axisSettings array is used to hold all of the settings for all of the axes
     private AxisSettings[] axisSettings = new AxisSettings[6];
@@ -54,7 +62,7 @@ public class DriverController extends Xbox
         System.out.println(this.getClass().getName() + " : Started Constructor");
 
         // Initialize all of the settings for each axis
-        axisSettings[Axis.kLeftX.value] = new AxisSettings(0.1, 1.0, false, AxisScale.kLinear);
+        axisSettings[Axis.kLeftX.value] = new AxisSettings(0.1, 0.0, 1.0, false, AxisScale.kLinear);
         setAxisSettings(Axis.kLeftX);
 
         // TODO: Initialize the other 5 axes
