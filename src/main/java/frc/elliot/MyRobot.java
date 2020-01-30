@@ -1,14 +1,16 @@
 package frc.elliot;
 
+import frc.elliot.components.Intake;
 import frc.elliot.components.Roller;
+import frc.elliot.controls.DriverController;
 import frc.elliot.controls.Xbox;
 
 public class MyRobot
 {
     //private static ShooterTest shooter = new ShooterTest();
-    private static Roller roller = Roller.getInstance();
-    private static Xbox xbox = new Xbox(0);
-
+    //private static Roller roller = Roller.getInstance();
+    //private static DriverController driverController = DriverController.getInstance();
+    private static Intake intake = Intake.getInstance();
     public void myRobot()
     {
         System.out.println(this.getClass().getName() + " : Started Constructor");
@@ -51,7 +53,13 @@ public class MyRobot
         //     roller.eject();
         // else
         //     roller.stop();
-        roller.setSpeed(1.0);
+
+        // if (driverController.getRawButton(Xbox.Button.kA))
+        // {
+
+        // }
+
+        intake.runFSM();
         
     }
 

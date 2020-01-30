@@ -4,7 +4,7 @@ import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANPIDController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Roller
 {
@@ -12,14 +12,14 @@ public class Roller
     private static final int MASTER_MOTOR_ID = 1;
     //private static final int SLAVE_MOTOR_ID = 2;
 
-    private static final double kP = 0.000351; 
-    private static final double kI = 0.00000005;
+    private static final double kP = 0.00005; 
+    private static final double kI = 0.0000004;
     private static final double kD = 0; 
     private static final double kIz = 0; 
     private static final double kFF = 0.0;//0.000084; 
     private static final double kMaxOutput = 1; 
     private static final double kMinOutput = -1;
-    private static final double maxRPM = 210;
+    private static final double maxRPM = 3000;
 
     private static CANSparkMax masterMotor = new CANSparkMax(MASTER_MOTOR_ID, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
     //private static CANSparkMax slaveMotor = new CANSparkMax(SLAVE_MOTOR_ID, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -51,7 +51,7 @@ public class Roller
 
     public void intake()
     {
-        setSpeed(1.0);
+        setSpeed(0.5);
     }
 
     public void eject()
@@ -82,8 +82,9 @@ public class Roller
     public void setSpeed(double speed)
     {
         // double rpmSpeed = speed * maxRPM;
-        pidController.setReference(3000, ControlType.kVelocity);
-        System.out.println(getEncoderVelocity() + " ");
-        SmartDashboard.putNumber("RPM: ", getEncoderVelocity());
+        //pidController.setReference(maxRPM, ControlType.kVelocity);
+        //System.out.println(getEncoderVelocity());
+        // SmartDashboard.putNumber("RPM: ", getEncoderVelocity());
+        masterMotor.set(speed);
     }
 }
