@@ -2,27 +2,25 @@ package frc.maxwell;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
-import frc.maxwell.Xbox.Axis;
+import frc.maxwell.intake.Intake;
 
-public class MyRobot
-{
-    private static TalonSRX motor = new TalonSRX(0);
-    PowerDistributionPanel pdp = new PowerDistributionPanel();
-    //private static Turret turret = Turret.getInstance();
+
+public class MyRobot {
+
+    //private static Intake intake = Intake.getInstance();
     private static Xbox joystick = new Xbox(0);
     public void myRobot()
     {
         System.out.println(this.getClass().getName() + " : Started Constructor");
         System.out.println("*** MAXWELL's Test Code ***");
 
-        System.out.println(this.getClass().getName() + " : Finished Constructor");
     }
 
-    public void robotInit()
-    {
-
+    public void robotInit() {
+      
     }
 
     public void robotPeriodic()
@@ -42,13 +40,13 @@ public class MyRobot
 
     public void teleopInit()
     {
-        motor.configFactoryDefault();
+        
     }
 
     public void teleopPeriodic()
     {
-        motor.set(ControlMode.PercentOutput, joystick.getRawAxis(Axis.kLeftX));
-        System.out.println(pdp.getTotalCurrent());
+        //intake.runFSM();
+        motor.set(joystick.getRawAxis(1));
     }
 
     public void testInit()
@@ -58,7 +56,6 @@ public class MyRobot
 
     public void testPeriodic()
     {
-
     }
 
     public void disabledInit()
