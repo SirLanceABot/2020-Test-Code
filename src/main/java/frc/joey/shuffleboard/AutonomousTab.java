@@ -31,6 +31,11 @@ public class AutonomousTab
         kYes, kNo;
     }
 
+    public enum PickUpLocation
+    {
+        kTrench, kRendezvousPoint;
+    }
+
     // Create a class to hold the data on the Shuffleboard tab
     protected static class AutonomousTabData
     {
@@ -38,6 +43,7 @@ public class AutonomousTab
         public ShootPowerCell shootPowerCell = ShootPowerCell.kYes;
         public InitiationLine initiationLine = InitiationLine.kNone;
         public PickUpPowerCell pickUpPowerCell = PickUpPowerCell.kNo;
+        public PickUpLocation pickUpLocation = PickUpLocation.kRendezvousPoint;
 
         // TODO: Add the other autonomous options
         
@@ -47,10 +53,11 @@ public class AutonomousTab
             String str = "";
 
             str += "*****  AUTONOMOUS SELECTION  *****\n";
-            str += "Starting Location: " + startingLocation + "\n";
-            str += "Shoot Power Cell : " + shootPowerCell + "\n";
-            str += "Direction to Move Off Initiation Line : " + initiationLine + "\n";
-            str += "Pick Up Power Cell After Shooting : " + pickUpPowerCell + "\n";
+            str += "Starting Location  : "  + startingLocation + "\n";
+            str += "Shoot Power Cell   : "  + shootPowerCell   + "\n";
+            str += "Initiation Line    : "  + initiationLine   + "\n";
+            str += "Pick Up Power Cell : "  + pickUpPowerCell  + "\n";
+            str += "Pick Up Location   : "  + pickUpLocation   + "\n";
 
             return str;
         }
@@ -67,6 +74,7 @@ public class AutonomousTab
     private SendableChooser<ShootPowerCell> shootPowerCellComboBox = new SendableChooser<>();
     private SendableChooser<InitiationLine> initiationLineComboBox = new SendableChooser<>();
     private SendableChooser<PickUpPowerCell> pickUpPowerCellComboBox = new SendableChooser<>();
+    private SendableChooser<PickUpLocation> pickUpLocationComboBox = new SendableChooser<>();
 
     // TODO: Add the other autonomous options
 
@@ -86,6 +94,7 @@ public class AutonomousTab
         createShootPowerCellComboBox();
         createInitiationLineComboBox();
         createPickUpPowerCellComboBox();
+        createPickUpLocationComboBox();
 
         // TODO: Call the other methods to create the autonomous widgets
 
@@ -105,14 +114,17 @@ public class AutonomousTab
     */
     private void createStartingLocationComboBox()
     {
+        //create and name the Combo Box
         SendableRegistry.add(startingLocationComboBox, "Starting Location");
         SendableRegistry.setName(startingLocationComboBox, "Starting Location");
         
+        //add options to Combo Box
         startingLocationComboBox.setDefaultOption("None (default)", StartingLocation.kNone);
         startingLocationComboBox.addOption("Right", StartingLocation.kRight);
         startingLocationComboBox.addOption("Center", StartingLocation.kCenter);
         startingLocationComboBox.addOption("Left", StartingLocation.kLeft);
 
+        //put the widget on the shuffleboard
         autonomousTab.add(startingLocationComboBox)
             .withWidget(BuiltInWidgets.kComboBoxChooser)
             .withPosition(0, 0)
@@ -125,12 +137,15 @@ public class AutonomousTab
     */
     private void createShootPowerCellComboBox()
     {
+        //create and name the Combo Box
         SendableRegistry.add(shootPowerCellComboBox, "Shoot Power Cell");
         SendableRegistry.setName(shootPowerCellComboBox, "Shoot Power Cell");
 
+        //add options to Combo Box
         shootPowerCellComboBox.setDefaultOption("Yes (default)", ShootPowerCell.kYes);
         shootPowerCellComboBox.addOption("No", ShootPowerCell.kNo);
 
+        //put the widget on the shuffleboard
         autonomousTab.add(shootPowerCellComboBox)
             .withWidget(BuiltInWidgets.kComboBoxChooser)
             .withPosition(0, 3)
@@ -148,7 +163,6 @@ public class AutonomousTab
         SendableRegistry.setName(initiationLineComboBox, "Move Off Initiation Line");
 
         //add options to Combo Box
-        //two lines??
         initiationLineComboBox.setDefaultOption("None (default)", InitiationLine.kNone);
         initiationLineComboBox.addOption("Toward Rendezvous Point", InitiationLine.kTowardRendezvousPoint);
         initiationLineComboBox.addOption("Toward Power Port", InitiationLine.kTowardPowerPort);
@@ -162,7 +176,7 @@ public class AutonomousTab
     }
 
     /**
-    * <b>Initiation Line</b> Combo Box
+    * <b>Pick Up Power Cell</b> Combo Box
     * <p>Create an entry in the Network Table and add the Combo Box to the Shuffleboard Tab
     */
     private void createPickUpPowerCellComboBox()
@@ -179,6 +193,27 @@ public class AutonomousTab
         autonomousTab.add(pickUpPowerCellComboBox)
             .withWidget(BuiltInWidgets.kComboBoxChooser)
             .withPosition(0, 9)
+            .withSize(4, 2);
+    }
+
+    /**
+    * <b>Power Cell Pick Up Location</b> Combo Box
+    * <p>Create an entry in the Network Table and add the Combo Box to the Shuffleboard Tab
+    */
+    private void createPickUpLocationComboBox()
+    {
+        //create and name the Combo Box
+        SendableRegistry.add(pickUpLocationComboBox, "Power Cell\n Pick Up Location");
+        SendableRegistry.setName(pickUpLocationComboBox, "Power Cell\n Pick Up Location");
+
+        //add options to Combo Box
+        pickUpLocationComboBox.setDefaultOption("Rendezvous Point (default)", PickUpLocation.kRendezvousPoint);
+        pickUpLocationComboBox.addOption("Trench", PickUpLocation.kTrench);
+        
+        //put the widget on the shuffleboard
+        autonomousTab.add(pickUpLocationComboBox)
+            .withWidget(BuiltInWidgets.kComboBoxChooser)
+            .withPosition(0, 12)
             .withSize(4, 2);
     }
     // TODO: Add methods for the other autonomous widgets
@@ -207,7 +242,8 @@ public class AutonomousTab
         autonomousTabData.shootPowerCell = shootPowerCellComboBox.getSelected();
         autonomousTabData.initiationLine = initiationLineComboBox.getSelected();
         autonomousTabData.pickUpPowerCell = pickUpPowerCellComboBox.getSelected();
-        //TODO: add other bois
+        autonomousTabData.pickUpLocation = pickUpLocationComboBox.getSelected();
+        
     }
 
     public void checkForNewAutonomousTabData()
