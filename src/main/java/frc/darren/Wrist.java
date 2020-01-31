@@ -48,7 +48,7 @@ public class Wrist
      */
     public void raise()
     {
-        if(wristState !=  WristState.kUp && wristState != WristState.kRaising)
+        if(wristState == WristState.kDown || wristState == WristState.kLowering)
         {
             timer.reset();
             setPneumatics(DoubleSolenoid.Value.kReverse);
@@ -84,7 +84,7 @@ public class Wrist
      */
     public void lower()
     {
-        if(wristState != WristState.kDown && wristState != WristState.kLowering)
+        if(wristState == WristState.kUp || wristState == WristState.kRaising)
         {
             timer.reset();
             setPneumatics(DoubleSolenoid.Value.kForward);

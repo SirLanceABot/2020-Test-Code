@@ -48,7 +48,7 @@ public class Shifter
      */
     public void shiftDown()
     {
-        if(shifterState !=  ShifterState.kLowGear && shifterState != ShifterState.kShiftingDown)
+        if(shifterState ==  ShifterState.kHighGear || shifterState == ShifterState.kShiftingUp)
         {
             timer.reset();
             setPneumatics(DoubleSolenoid.Value.kForward);
@@ -84,7 +84,7 @@ public class Shifter
      */
     public void shiftUp()
     {
-        if(shifterState != ShifterState.kHighGear && shifterState != ShifterState.kShiftingUp)
+        if(shifterState ==  ShifterState.kLowGear || shifterState == ShifterState.kShiftingDown)
         {
             timer.reset();
             setPneumatics(DoubleSolenoid.Value.kReverse);
