@@ -93,7 +93,7 @@ public class AutonomousTab
         startingLocationComboBox.addOption("Left", StartingLocation.kLeft);
 
         autonomousTab.add(startingLocationComboBox)
-            .withWidget(BuiltInWidgets.kComboBoxChooser)
+            .withWidget(BuiltInWidgets.kSplitButtonChooser)
             .withPosition(0, 0)
             .withSize(4, 2);
     }
