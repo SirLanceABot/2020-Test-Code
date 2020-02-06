@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SendableRegistry;
 
-
 /**
  * The DriverControllerTab class creates the Driver Controller tab on the Shuffleboard.
  */
@@ -21,6 +20,7 @@ public class DriverControllerTab
     private class AxisObjects
     {
         private NetworkTableEntry deadzoneEntry;
+        private NetworkTableEntry minOutputEntry;
         private NetworkTableEntry maxOutputEntry;
         private SendableChooser<Boolean> isFlipped = new SendableChooser<>();
         private SendableChooser<DriverController.AxisScale> axisScaleComboBox = new SendableChooser<>();
@@ -31,10 +31,12 @@ public class DriverControllerTab
     // Create a Shuffleboard Tab
     private ShuffleboardTab driverControllerTab = Shuffleboard.getTab("Driver Controller");
 
-
     private AxisObjects leftXObjects = new AxisObjects();
     private AxisObjects leftYObjects = new AxisObjects();
+    private AxisObjects rightXObjects = new AxisObjects();
+    private AxisObjects rightYObjects = new AxisObjects();
 
+    
     private static DriverControllerTab instance = new DriverControllerTab();
 
     private DriverControllerTab()
@@ -43,6 +45,8 @@ public class DriverControllerTab
 
         createAxisWidgets(DriverController.Axis.kLeftX, leftXObjects, 0);
         createAxisWidgets(DriverController.Axis.kLeftY, leftYObjects, 4);
+        createAxisWidgets(DriverController.Axis.kRightX, rightXObjects, 8);
+        createAxisWidgets(DriverController.Axis.kRightY, rightYObjects, 12);
 
         // TODO: create the other widgets for the other axes
 
@@ -59,25 +63,31 @@ public class DriverControllerTab
         int row = 0;
         int width = 4;
         int height = 2;
+        String str = axis.toString();
 
         // Get the current axis settings on the Driver Controller for the given axis
         DriverController.AxisSettings axisSettings = driverController.new AxisSettings();
         axisSettings = driverController.getAxisSettings(axis);
 
         // Create the text box to set the deadzone of the axis
-        axisObjects.deadzoneEntry = createTextBox("Left X Deadzone", Double.toString(axisSettings.axisDeadzone), column, row, width, height);
+        axisObjects.deadzoneEntry = createTextBox(str + " Deadzone", Double.toString(axisSettings.axisDeadzone), column, row, width, height);
+
+        // Create the text box to set the min output of the axis
+        row += 2;
+        axisObjects.minOutputEntry = createTextBox(str + " Min Output", Double.toString(axisSettings.axisMinOutput), column, row, width, height);
         
         // Create the text box to set the max output of the axis
         row += 2;
-        axisObjects.maxOutputEntry = createTextBox("Left X Max Output", Double.toString(axisSettings.axisMaxOutput), column, row, width, height);
+        axisObjects.maxOutputEntry = createTextBox(str + " Max Output", Double.toString(axisSettings.axisMaxOutput), column, row, width, height);
 
         // Create the button to flip the axis (swap negative and positive)
         row += 2;
-        createSplitButtonChooser(axisObjects.isFlipped, "Left X Is Flipped", axisSettings.axisIsFlipped, column, row, width, height);
+        // createSplitButtonChooser(axisObjects.isFlipped, str + " Is Flipped", axisSettings.axisIsFlipped, column, row, width, height);
+        createIsFlippedComboBox(axisObjects.isFlipped, str + " Is Flipped", axisSettings.axisIsFlipped, column, row, width, height);
 
         // Create the combo box to set the axis scale
         row += 3;
-        createComboBox(axisObjects.axisScaleComboBox, "Left X Axis Scale", axisSettings.axisScale, column, row, width, height);
+        createAxisScaleComboBox(axisObjects.axisScaleComboBox, str + " Axis Scale", axisSettings.axisScale, column, row, width, height);
     }
 
     /**
@@ -97,7 +107,7 @@ public class DriverControllerTab
     * Create a <b>Combo Box</b>
     * <p>Create an entry in the Network Table and add the Combo Box to the Shuffleboard Tab
     */
-    private void createComboBox(SendableChooser<DriverController.AxisScale> comboBox, String title, DriverController.AxisScale defaultValue, int column, int row, int width, int height)
+    private void createAxisScaleComboBox(SendableChooser<DriverController.AxisScale> comboBox, String title, DriverController.AxisScale defaultValue, int column, int row, int width, int height)
     {
         SendableRegistry.add(comboBox, title);
         SendableRegistry.setName(comboBox, title);
@@ -114,6 +124,24 @@ public class DriverControllerTab
             }
         }
 
+        driverControllerTab.add(comboBox)
+            .withWidget(BuiltInWidgets.kComboBoxChooser)
+            .withPosition(column, row)
+            .withSize(width, height);
+    }
+
+       /**
+    * Create a <b>Combo Box</b>
+    * <p>Create an entry in the Network Table and add the Combo Box to the Shuffleboard Tab
+    */
+    private void createIsFlippedComboBox(SendableChooser<Boolean> comboBox, String title, Boolean defaultValue, int column, int row, int width, int height)
+    {
+        SendableRegistry.add(comboBox, title);
+        SendableRegistry.setName(comboBox, title);
+  
+        comboBox.setDefaultOption((defaultValue ? "Yes" : "No"), defaultValue);
+        comboBox.addOption((!defaultValue ? "Yes" : "No"), !defaultValue);
+  
         driverControllerTab.add(comboBox)
             .withWidget(BuiltInWidgets.kComboBoxChooser)
             .withPosition(column, row)
@@ -138,11 +166,12 @@ public class DriverControllerTab
             .withSize(width, height);
     }
 
-    private DriverController.AxisSettings getAxisSettingsFromShuffleboard(AxisObjects axisObjects)
+    private DriverController.AxisSettings getAxisSettingsFromNetworkTable(AxisObjects axisObjects)
     {
         DriverController.AxisSettings axisSettings = driverController.new AxisSettings();
 
         axisSettings.axisDeadzone = Double.valueOf(axisObjects.deadzoneEntry.getString("0.1"));
+        axisSettings.axisMinOutput = Double.valueOf(axisObjects.minOutputEntry.getString("0.0"));
         axisSettings.axisMaxOutput = Double.valueOf(axisObjects.maxOutputEntry.getString("1.0"));
         axisSettings.axisIsFlipped = axisObjects.isFlipped.getSelected();
         axisSettings.axisScale = axisObjects.axisScaleComboBox.getSelected();
@@ -154,12 +183,16 @@ public class DriverControllerTab
     {
         DriverController.AxisSettings axisSettings = driverController.new AxisSettings();
 
-        axisSettings = getAxisSettingsFromShuffleboard(leftXObjects);
+        axisSettings = getAxisSettingsFromNetworkTable(leftXObjects);
         driverController.setAxisSettings(DriverController.Axis.kLeftX, axisSettings);
 
-        axisSettings = getAxisSettingsFromShuffleboard(leftYObjects);
+        axisSettings = getAxisSettingsFromNetworkTable(leftYObjects);
         driverController.setAxisSettings(DriverController.Axis.kLeftY, axisSettings);
 
-        // TODO: Add the other axes
+        axisSettings = getAxisSettingsFromNetworkTable(rightXObjects);
+        driverController.setAxisSettings(DriverController.Axis.kRightX, axisSettings);
+
+        axisSettings = getAxisSettingsFromNetworkTable(rightYObjects);
+        driverController.setAxisSettings(DriverController.Axis.kRightY, axisSettings);
     }
 }

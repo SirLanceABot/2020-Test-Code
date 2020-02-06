@@ -1,6 +1,7 @@
 package frc.jwood;
 
 import frc.jwood.controls.DriverController;
+import frc.jwood.controls.DriverController.Action;
 import frc.jwood.shuffleboard.MainShuffleboard;
 
 public class MyRobot
@@ -46,6 +47,8 @@ public class MyRobot
     public void teleopPeriodic()
     {
         System.out.println(driverController.getRawAxis(0));
+        driverController.getAxis(Action.kMove);
+        driverController.getButton(Action.kIntake);
     }
 
     public void testInit()

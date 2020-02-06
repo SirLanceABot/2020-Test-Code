@@ -36,6 +36,15 @@ public class Xbox extends Joystick
         kLinear, kSquared, kCubed;
     }
 
+    public class AxisSettings
+    {
+        public double axisDeadzone;
+        public double axisMinOutput;
+        public double axisMaxOutput;
+        public boolean axisIsFlipped;
+        public AxisScale axisScale;
+    }
+
     public static final int NUMBER_OF_AXES = 6;
 
     // set the default axis values
@@ -182,6 +191,39 @@ public class Xbox extends Joystick
     {
         this.axisScale[axis.value] = axisScale;
     }
+
+    public void setAxisSettings(Axis axis, double axisDeadzone, double axisMinOutput, double axisMaxOutput, boolean axisIsFlipped, AxisScale axisScale)
+    {
+        setAxisDeadzone(axis, axisDeadzone);
+        setAxisMinOutput(axis, axisMinOutput);
+        setAxisMaxOutput(axis, axisMaxOutput);
+        setAxisIsFlipped(axis, axisIsFlipped);
+        setAxisScale(axis, axisScale);
+    }
+
+    public void setAxisSettings(Axis axis, AxisSettings axisSettings)
+    {
+        setAxisDeadzone(axis, axisSettings.axisDeadzone);
+        setAxisMinOutput(axis, axisSettings.axisMinOutput);
+        setAxisMaxOutput(axis, axisSettings.axisMaxOutput);
+        setAxisIsFlipped(axis, axisSettings.axisIsFlipped);
+        setAxisScale(axis, axisSettings.axisScale);
+    }
+
+    public AxisSettings getAxisSettings(Axis axis)
+    {
+        AxisSettings axisSettings = new AxisSettings();
+
+        axisSettings.axisDeadzone = axisDeadzone[axis.value];
+        axisSettings.axisMinOutput = axisMinOutput[axis.value];
+        axisSettings.axisMaxOutput = axisMaxOutput[axis.value];
+        axisSettings.axisIsFlipped = axisIsFlipped[axis.value];
+        axisSettings.axisScale = axisScale[axis.value];
+
+        return axisSettings;
+    }
+
+
 
     // @Override
     // public String toString()
