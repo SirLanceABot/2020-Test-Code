@@ -288,8 +288,8 @@ public class AutonomousTab
     private void createMoveBox()
     {
         //create and name the Box
-        SendableRegistry.add(moveBox, "Move");
-        SendableRegistry.setName(moveBox, "Move");
+        SendableRegistry.add(moveBox, "Move Off Line");
+        SendableRegistry.setName(moveBox, "Move Off Line");
 
         //add options to Box
         moveBox.setDefaultOption("Yes", Move.kYes);
@@ -338,9 +338,8 @@ public class AutonomousTab
         SendableRegistry.setName(moveDirectionBox, "Move Towards");
 
         //add options to Box
-        moveDirectionBox.setDefaultOption("Power Port", MoveDirection.kPowerPort);
-        moveDirectionBox.addOption("Rendezvous Point", MoveDirection.kRendezvousPoint);
-        
+        moveDirectionBox.setDefaultOption("Rendezvous Point", MoveDirection.kRendezvousPoint);
+        moveDirectionBox.addOption("Power Port", MoveDirection.kPowerPort);
         
         //put the widget on the shuffleboard
         autonomousTab.add(moveDirectionBox)
