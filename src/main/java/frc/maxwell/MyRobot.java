@@ -46,7 +46,7 @@ public class MyRobot {
     public void teleopPeriodic()
     {
         //intake.runFSM();
-        motor.set(joystick.getRawAxis(1));
+        //motor.set(joystick.getRawAxis(1));
     }
 
     public void testInit()
