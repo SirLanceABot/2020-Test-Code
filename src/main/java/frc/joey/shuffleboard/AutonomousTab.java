@@ -50,7 +50,7 @@ public class AutonomousTab
 
     public enum MoveDirection
     {
-        kTowardPowerPort, kTowardRendezvousPoint;
+        kPowerPort, kRendezvousPoint;
     }
 
     //-------------------------------------------------------------------//
@@ -86,7 +86,7 @@ public class AutonomousTab
 
         public Move move = Move.kYes;
         public MoveDelay moveDelay = MoveDelay.k0;
-        public MoveDirection moveDirection = MoveDirection.kTowardPowerPort;
+        public MoveDirection moveDirection = MoveDirection.kPowerPort;
 
         public PickUpPowerCell pickUpPowerCell = PickUpPowerCell.kNo;
         public PickUpLocation pickUpLocation = PickUpLocation.kRendezvousPoint;
@@ -196,7 +196,7 @@ public class AutonomousTab
         SendableRegistry.setName(startingLocationBox, "Starting Location");
         
         //add options to  Box
-        startingLocationBox.setDefaultOption("None (default)", StartingLocation.kNone);
+        startingLocationBox.setDefaultOption("None", StartingLocation.kNone);
         startingLocationBox.addOption("Left", StartingLocation.kLeft);
         startingLocationBox.addOption("Center", StartingLocation.kCenter);
         startingLocationBox.addOption("Right", StartingLocation.kRight);
@@ -221,13 +221,13 @@ public class AutonomousTab
         SendableRegistry.setName(orderOfOperationsBox, "Order of Operations");
 
         //add options to box
-        orderOfOperationsBox.setDefaultOption("Shoot Then Move (default)", OrderOfOperations.kShootThenMove);
+        orderOfOperationsBox.setDefaultOption("Shoot Then Move", OrderOfOperations.kShootThenMove);
         orderOfOperationsBox.addOption("Move Then Shoot", OrderOfOperations.kMoveThenShoot);
 
         //put the widget on the Shuffleboard
         autonomousTab.add(orderOfOperationsBox)
             .withWidget(BuiltInWidgets.kSplitButtonChooser)
-            .withPosition(0,3)
+            .withPosition(9,0)
             .withSize(8, 2);
     }
 
@@ -244,14 +244,14 @@ public class AutonomousTab
         SendableRegistry.setName(shootPowerCellBox, "Shoot Power Cell");
 
         //add options to Box
-        shootPowerCellBox.setDefaultOption("Yes (default)", ShootPowerCell.kYes);
+        shootPowerCellBox.setDefaultOption("Yes", ShootPowerCell.kYes);
         shootPowerCellBox.addOption("No", ShootPowerCell.kNo);
 
         //put the widget on the shuffleboard
         autonomousTab.add(shootPowerCellBox)
             .withWidget(BuiltInWidgets.kSplitButtonChooser)
-            .withPosition(1, 6)
-            .withSize(5, 2);
+            .withPosition(1, 3)
+            .withSize(4, 2);
     }
 
     /**
@@ -265,7 +265,7 @@ public class AutonomousTab
         SendableRegistry.setName(shootDelayBox, "Shoot Delay (Seconds)");
 
         //add options to Box
-        shootDelayBox.setDefaultOption("0 (default)", ShootDelay.k0);
+        shootDelayBox.setDefaultOption("0", ShootDelay.k0);
         shootDelayBox.addOption("1", ShootDelay.k1);
         shootDelayBox.addOption("2", ShootDelay.k2);
         shootDelayBox.addOption("3", ShootDelay.k3);
@@ -275,8 +275,8 @@ public class AutonomousTab
         //put the widget on the shuffleboard
         autonomousTab.add(shootDelayBox)
             .withWidget(BuiltInWidgets.kSplitButtonChooser)
-            .withPosition(7, 6)
-            .withSize(4, 2);
+            .withPosition(6, 3)
+            .withSize(6, 2);
     }
 
 
@@ -292,13 +292,13 @@ public class AutonomousTab
         SendableRegistry.setName(moveBox, "Move");
 
         //add options to Box
-        moveBox.setDefaultOption("Yes (default)", Move.kYes);
+        moveBox.setDefaultOption("Yes", Move.kYes);
         moveBox.addOption("No", Move.kNo);
 
         //put the widget on the shuffleboard
         autonomousTab.add(moveBox)
             .withWidget(BuiltInWidgets.kSplitButtonChooser)
-            .withPosition(1, 9)
+            .withPosition(1, 6)
             .withSize(4, 2);
     }
 
@@ -309,11 +309,11 @@ public class AutonomousTab
     private void createMoveDelayBox()
     {
         //create and name the Box
-        SendableRegistry.add(moveDelayBox, "Move Delay");
-        SendableRegistry.setName(moveDelayBox, "Move Delay");
+        SendableRegistry.add(moveDelayBox, "Move Delay (Seconds)");
+        SendableRegistry.setName(moveDelayBox, "Move Delay (Seconds)");
 
         //add options to Box
-        moveDelayBox.setDefaultOption("0 (default)", MoveDelay.k0);
+        moveDelayBox.setDefaultOption("0", MoveDelay.k0);
         moveDelayBox.addOption("1", MoveDelay.k1);
         moveDelayBox.addOption("2", MoveDelay.k2);
         moveDelayBox.addOption("3", MoveDelay.k3);
@@ -323,8 +323,8 @@ public class AutonomousTab
         //put the widget on the shuffleboard
         autonomousTab.add(moveDelayBox)
             .withWidget(BuiltInWidgets.kSplitButtonChooser)
-            .withPosition(6, 9)
-            .withSize(4, 2);
+            .withPosition(6, 6)
+            .withSize(6, 2);
     }
 
     /**
@@ -334,19 +334,19 @@ public class AutonomousTab
     private void createMoveDirectionBox()
     {
         //create and name the Box
-        SendableRegistry.add(moveDirectionBox, "Move Direction");
-        SendableRegistry.setName(moveDirectionBox, "Move Direction");
+        SendableRegistry.add(moveDirectionBox, "Move Towards");
+        SendableRegistry.setName(moveDirectionBox, "Move Towards");
 
         //add options to Box
-        moveDirectionBox.setDefaultOption("Toward Power Port (default)", MoveDirection.kTowardPowerPort);
-        moveDirectionBox.addOption("Toward Rendezvous Point", MoveDirection.kTowardRendezvousPoint);
+        moveDirectionBox.setDefaultOption("Power Port", MoveDirection.kPowerPort);
+        moveDirectionBox.addOption("Rendezvous Point", MoveDirection.kRendezvousPoint);
         
         
         //put the widget on the shuffleboard
         autonomousTab.add(moveDirectionBox)
             .withWidget(BuiltInWidgets.kSplitButtonChooser)
-            .withPosition(11, 9)
-            .withSize(4, 2);
+            .withPosition(13, 6)
+            .withSize(6, 2);
     }
 
     /**
@@ -356,17 +356,17 @@ public class AutonomousTab
     private void createPickUpPowerCellBox()
     {
         //create and name the Box
-        SendableRegistry.add(pickUpPowerCellBox, "Pick Up Power Cell\n After Shooting");
-        SendableRegistry.setName(pickUpPowerCellBox, "Pick Up Power Cell\n After Shooting");
+        SendableRegistry.add(pickUpPowerCellBox, "Pick Up Power Cell");
+        SendableRegistry.setName(pickUpPowerCellBox, "Pick Up Power Cell");
 
         //add options to Box
-        pickUpPowerCellBox.setDefaultOption("No (default)", PickUpPowerCell.kNo);
-        pickUpPowerCellBox.addOption("Yes", PickUpPowerCell.kYes);
+        pickUpPowerCellBox.setDefaultOption("Yes", PickUpPowerCell.kYes);
+        pickUpPowerCellBox.addOption("No", PickUpPowerCell.kNo);
 
         //put the widget on the shuffleboard
         autonomousTab.add(pickUpPowerCellBox)
             .withWidget(BuiltInWidgets.kSplitButtonChooser)
-            .withPosition(1, 12)
+            .withPosition(1, 9)
             .withSize(4, 2);
     }
 
@@ -377,18 +377,18 @@ public class AutonomousTab
     private void createPickUpLocationBox()
     {
         //create and name the Box
-        SendableRegistry.add(pickUpLocationBox, "Power Cell\n Pick Up Location");
-        SendableRegistry.setName(pickUpLocationBox, "Power Cell\n Pick Up Location");
+        SendableRegistry.add(pickUpLocationBox, "Pick Up Location");
+        SendableRegistry.setName(pickUpLocationBox, "Pick Up Location");
 
         //add options to Box
-        pickUpLocationBox.setDefaultOption("Rendezvous Point (default)", PickUpLocation.kRendezvousPoint);
+        pickUpLocationBox.setDefaultOption("Rendezvous Point", PickUpLocation.kRendezvousPoint);
         pickUpLocationBox.addOption("Trench", PickUpLocation.kTrench);
         
         //put the widget on the shuffleboard
         autonomousTab.add(pickUpLocationBox)
             .withWidget(BuiltInWidgets.kSplitButtonChooser)
-            .withPosition(6, 12)
-            .withSize(4, 2);
+            .withPosition(6, 9)
+            .withSize(6, 2);
     }
 
     private void createShootNewPowerCellBox()
@@ -398,14 +398,14 @@ public class AutonomousTab
         SendableRegistry.setName(shootNewPowerCellBox, "Shoot New Power Cells");
 
         //add options to Box
-        shootNewPowerCellBox.setDefaultOption("Yes (default)", ShootNewPowerCells.kYes);
+        shootNewPowerCellBox.setDefaultOption("Yes", ShootNewPowerCells.kYes);
         shootNewPowerCellBox.addOption("No", ShootNewPowerCells.kNo);
 
         //put the widget on the shuffleboard
         autonomousTab.add(shootNewPowerCellBox)
             .withWidget(BuiltInWidgets.kSplitButtonChooser)
-            .withPosition(1, 15)
-            .withSize(4, 2);
+            .withPosition(13, 9)
+            .withSize(6, 2);
     }
 
     /**
@@ -422,7 +422,7 @@ public class AutonomousTab
 
         autonomousTab.add(sendDataButton)
             .withWidget(BuiltInWidgets.kSplitButtonChooser)
-            .withPosition(9, 9)
+            .withPosition(21, 1)
             .withSize(4, 2);
     }
 
