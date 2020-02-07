@@ -1,5 +1,9 @@
 package frc.joey.shuffleboard;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import edu.wpi.first.networktables.NetworkTableEntry;
 //import edu.wpi.first.wpilibj.Relay.Direction;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -65,8 +69,6 @@ public class AutonomousTab
         kTrench, kRendezvousPoint;
     }
 
-    //-------------------------------------------------------------------//
-
     public enum ShootNewPowerCells
     {
         kYes, kNo;
@@ -90,8 +92,9 @@ public class AutonomousTab
 
         public PickUpPowerCell pickUpPowerCell = PickUpPowerCell.kNo;
         public PickUpLocation pickUpLocation = PickUpLocation.kRendezvousPoint;
-
         public ShootNewPowerCells shootNewPowerCells = ShootNewPowerCells.kYes;
+
+
         
         @Override
         public String toString()
@@ -101,19 +104,18 @@ public class AutonomousTab
             str += " \n";
             str += "*****  AUTONOMOUS SELECTION  *****\n";
             str += "Starting Location     : "  + startingLocation   + "\n";
-
+            str += " \n                                                  ";
             str += "Order of Operations   : "  + orderOfOperations  + "\n";
-
+            str += " \n                                                  ";
             str += "Shoot Power Cell      : "  + shootPowerCell     + "\n";
             str += "Shoot Delay           : "  + shootDelay         + "\n";
-            
-            str += "Move                  : "  + move               + "\n";
+            str += " \n                                                  ";
+            str += "Move Off Line         : "  + move               + "\n";
             str += "Move Delay            : "  + moveDelay          + "\n";
             str += "Move Direction        : "  + moveDirection      + "\n";
-
+            str += " \n                                                  ";
             str += "Pick Up Power Cell    : "  + pickUpPowerCell    + "\n";
-            str += "Pick Up Location      : "  + pickUpLocation     + "\n";
-            
+            str += "Pick Up Location      : "  + pickUpLocation     + "\n";    
             str += "Shoot New Power Cells : "  + shootNewPowerCells + "\n";
 
             return str;
@@ -140,13 +142,15 @@ public class AutonomousTab
 
     private SendableChooser<PickUpPowerCell> pickUpPowerCellBox = new SendableChooser<>();
     private SendableChooser<PickUpLocation> pickUpLocationBox = new SendableChooser<>();
-
     private SendableChooser<ShootNewPowerCells> shootNewPowerCellBox = new SendableChooser<>();
     
+    //private SendableChooser<Boolean> redLightGreenLightBox = new SendableChooser<>();
+    private NetworkTableEntry goodToGo;
 
 
     // Create the Button object
     private SendableChooser<Boolean> sendDataButton = new SendableChooser<>();
+    // private NetworkTableEntry sendDataButton;
 
     private boolean previousStateOfSendButton = false;
 
@@ -169,11 +173,14 @@ public class AutonomousTab
 
         createPickUpPowerCellBox();
         createPickUpLocationBox();
-
         createShootNewPowerCellBox();
         
-
+        // sendDataButton = createSendDataButton();
+        // sendDataButton.setBoolean(false);
         createSendDataButton();
+
+        goodToGo = createRedLightGreenLightBox();
+        goodToGo.setBoolean(false);
 
         System.out.println(this.getClass().getName() + ": Finished Constructor");
     }
@@ -334,18 +341,18 @@ public class AutonomousTab
     private void createMoveDirectionBox()
     {
         //create and name the Box
-        SendableRegistry.add(moveDirectionBox, "Move Towards");
-        SendableRegistry.setName(moveDirectionBox, "Move Towards");
+        SendableRegistry.add(moveDirectionBox, "Move...");
+        SendableRegistry.setName(moveDirectionBox, "Move...");
 
         //add options to Box
-        moveDirectionBox.setDefaultOption("Rendezvous Point", MoveDirection.kRendezvousPoint);
-        moveDirectionBox.addOption("Power Port", MoveDirection.kPowerPort);
+        moveDirectionBox.setDefaultOption("Away From Power Port", MoveDirection.kRendezvousPoint);
+        moveDirectionBox.addOption("Toward Power Port", MoveDirection.kPowerPort);
         
         //put the widget on the shuffleboard
         autonomousTab.add(moveDirectionBox)
             .withWidget(BuiltInWidgets.kSplitButtonChooser)
             .withPosition(13, 6)
-            .withSize(6, 2);
+            .withSize(8, 2);
     }
 
     /**
@@ -380,9 +387,9 @@ public class AutonomousTab
         SendableRegistry.setName(pickUpLocationBox, "Pick Up Location");
 
         //add options to Box
-        pickUpLocationBox.setDefaultOption("Rendezvous Point", PickUpLocation.kRendezvousPoint);
-        pickUpLocationBox.addOption("Trench", PickUpLocation.kTrench);
-        
+        pickUpLocationBox.setDefaultOption("Trench", PickUpLocation.kTrench);
+        pickUpLocationBox.addOption("Rendezvous Point", PickUpLocation.kRendezvousPoint);
+
         //put the widget on the shuffleboard
         autonomousTab.add(pickUpLocationBox)
             .withWidget(BuiltInWidgets.kSplitButtonChooser)
@@ -404,12 +411,16 @@ public class AutonomousTab
         autonomousTab.add(shootNewPowerCellBox)
             .withWidget(BuiltInWidgets.kSplitButtonChooser)
             .withPosition(13, 9)
-            .withSize(6, 2);
+            .withSize(8, 2);
     }
 
     /**
      * <b>Send Data</b> Button
-     * <p>Create an entry in the Network Table and add the Button to the Shuffleboard Tab
+     * <p>
+     * Create an entry in the Network Table and add the Button to the Shuffleboard
+     * Tab
+     * 
+     * @return
      */
     private void createSendDataButton()
     {
@@ -421,8 +432,36 @@ public class AutonomousTab
 
         autonomousTab.add(sendDataButton)
             .withWidget(BuiltInWidgets.kSplitButtonChooser)
-            .withPosition(21, 1)
+            .withPosition(23, 1)
             .withSize(4, 2);
+        
+        // return autonomousTab.add("Send Data", false)
+        //     .withWidget(BuiltInWidgets.kToggleSwitch)
+        //     .withPosition(23, 1)
+        //     .withSize(4, 2)
+        //     .getEntry();
+    }
+
+    private NetworkTableEntry createRedLightGreenLightBox()
+    {
+        //SendableRegistry.add(redLightGreenLightBox, "Good to Go?");
+        //SendableRegistry.setName(redLightGreenLightBox, "Good to Go?");
+
+        // redLightGreenLightBox.setDefaultOption("No", false);
+        // redLightGreenLightBox.addOption("Yes", true);
+
+        Map<String, Object> booleanBoxProperties = new HashMap<>();
+        booleanBoxProperties.put("Color when true", "Lime");
+        booleanBoxProperties.put("Color when false", "Red");
+        
+        return autonomousTab.add("Good to Go?", false)
+             .withWidget(BuiltInWidgets.kBooleanBox)
+             .withPosition(23, 4)
+             .withSize(4, 4)
+             .withProperties(booleanBoxProperties)
+             .getEntry();
+
+        
     }
 
     private void updateAutonomousTabData()
@@ -471,6 +510,16 @@ public class AutonomousTab
 
     private boolean getSendDataButton()
     {
+        // Boolean sendData = sendDataButton.getSelected();
+        // boolean sendData = sendDataButton.getBoolean(false);
+
+        // if(sendData)
+        // {
+        //     goodToGo.setBoolean(true);
+
+        //     // sendDataButton.setBoolean(false);
+        // }
+
         return sendDataButton.getSelected();
     }
 }
