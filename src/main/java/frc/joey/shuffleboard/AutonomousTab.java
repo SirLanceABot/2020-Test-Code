@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.DriverStation;
 //import edu.wpi.first.wpilibj.Relay.Direction;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -42,7 +43,7 @@ public class AutonomousTab
 
     //-------------------------------------------------------------------//
 
-    public enum Move
+    public enum MoveOffLine
     {
         kYes, kNo;
     }
@@ -52,9 +53,9 @@ public class AutonomousTab
         k0, k1, k2, k3, k4, k5;
     }
 
-    public enum MoveDirection
+    public enum DirectionToMove
     {
-        kPowerPort, kRendezvousPoint;
+        kAwayFromPowerPort, kTowardPowerPort;
     }
 
     //-------------------------------------------------------------------//
@@ -86,12 +87,12 @@ public class AutonomousTab
         public ShootPowerCell shootPowerCell = ShootPowerCell.kYes;
         public ShootDelay shootDelay = ShootDelay.k0;
 
-        public Move move = Move.kYes;
+        public MoveOffLine moveOffLine = MoveOffLine.kYes;
         public MoveDelay moveDelay = MoveDelay.k0;
-        public MoveDirection moveDirection = MoveDirection.kPowerPort;
+        public DirectionToMove directionToMove = DirectionToMove.kAwayFromPowerPort;
 
-        public PickUpPowerCell pickUpPowerCell = PickUpPowerCell.kNo;
-        public PickUpLocation pickUpLocation = PickUpLocation.kRendezvousPoint;
+        public PickUpPowerCell pickUpPowerCell = PickUpPowerCell.kYes;
+        public PickUpLocation pickUpLocation = PickUpLocation.kTrench;
         public ShootNewPowerCells shootNewPowerCells = ShootNewPowerCells.kYes;
 
 
@@ -104,16 +105,12 @@ public class AutonomousTab
             str += " \n";
             str += "*****  AUTONOMOUS SELECTION  *****\n";
             str += "Starting Location     : "  + startingLocation   + "\n";
-            str += " \n                                                  ";
             str += "Order of Operations   : "  + orderOfOperations  + "\n";
-            str += " \n                                                  ";
             str += "Shoot Power Cell      : "  + shootPowerCell     + "\n";
             str += "Shoot Delay           : "  + shootDelay         + "\n";
-            str += " \n                                                  ";
-            str += "Move Off Line         : "  + move               + "\n";
+            str += "Move Off Line         : "  + moveOffLine        + "\n";
             str += "Move Delay            : "  + moveDelay          + "\n";
-            str += "Move Direction        : "  + moveDirection      + "\n";
-            str += " \n                                                  ";
+            str += "Direction to Move     : "  + directionToMove    + "\n";
             str += "Pick Up Power Cell    : "  + pickUpPowerCell    + "\n";
             str += "Pick Up Location      : "  + pickUpLocation     + "\n";    
             str += "Shoot New Power Cells : "  + shootNewPowerCells + "\n";
@@ -136,9 +133,9 @@ public class AutonomousTab
     private SendableChooser<ShootPowerCell> shootPowerCellBox = new SendableChooser<>();
     private SendableChooser<ShootDelay> shootDelayBox = new SendableChooser<>();
     
-    private SendableChooser<Move> moveBox = new SendableChooser<>();
+    private SendableChooser<MoveOffLine> moveOffLineBox = new SendableChooser<>();
     private SendableChooser<MoveDelay> moveDelayBox = new SendableChooser<>();
-    private SendableChooser<MoveDirection> moveDirectionBox = new SendableChooser<>();
+    private SendableChooser<DirectionToMove> directionToMoveBox = new SendableChooser<>();
 
     private SendableChooser<PickUpPowerCell> pickUpPowerCellBox = new SendableChooser<>();
     private SendableChooser<PickUpLocation> pickUpLocationBox = new SendableChooser<>();
@@ -167,9 +164,9 @@ public class AutonomousTab
         createShootPowerCellBox();
         createShootDelayBox();
         
-        createMoveBox();
+        createMoveOffLineBox();
         createMoveDelayBox();
-        createMoveDirectionBox();
+        createDirectionToMoveBox();
 
         createPickUpPowerCellBox();
         createPickUpLocationBox();
@@ -292,18 +289,18 @@ public class AutonomousTab
     * <b>Move</b> Box
     * <p>Create an entry in the Network Table and add the Box to the Shuffleboard Tab
     */
-    private void createMoveBox()
+    private void createMoveOffLineBox()
     {
         //create and name the Box
-        SendableRegistry.add(moveBox, "Move Off Line");
-        SendableRegistry.setName(moveBox, "Move Off Line");
+        SendableRegistry.add(moveOffLineBox, "Move Off Line");
+        SendableRegistry.setName(moveOffLineBox, "Move Off Line");
 
         //add options to Box
-        moveBox.setDefaultOption("Yes", Move.kYes);
-        moveBox.addOption("No", Move.kNo);
+        moveOffLineBox.setDefaultOption("Yes", MoveOffLine.kYes);
+        moveOffLineBox.addOption("No", MoveOffLine.kNo);
 
         //put the widget on the shuffleboard
-        autonomousTab.add(moveBox)
+        autonomousTab.add(moveOffLineBox)
             .withWidget(BuiltInWidgets.kSplitButtonChooser)
             .withPosition(1, 6)
             .withSize(4, 2);
@@ -338,18 +335,18 @@ public class AutonomousTab
     * <b>Move Direction</b> Box
     * <p>Create an entry in the Network Table and add the Box to the Shuffleboard Tab
     */
-    private void createMoveDirectionBox()
+    private void createDirectionToMoveBox()
     {
         //create and name the Box
-        SendableRegistry.add(moveDirectionBox, "Move...");
-        SendableRegistry.setName(moveDirectionBox, "Move...");
+        SendableRegistry.add(directionToMoveBox, "Direction to Move");
+        SendableRegistry.setName(directionToMoveBox, "Direction to Move");
 
         //add options to Box
-        moveDirectionBox.setDefaultOption("Away From Power Port", MoveDirection.kRendezvousPoint);
-        moveDirectionBox.addOption("Toward Power Port", MoveDirection.kPowerPort);
+        directionToMoveBox.setDefaultOption("Away From Power Port", DirectionToMove.kAwayFromPowerPort);
+        directionToMoveBox.addOption("Toward Power Port", DirectionToMove.kTowardPowerPort);
         
         //put the widget on the shuffleboard
-        autonomousTab.add(moveDirectionBox)
+        autonomousTab.add(directionToMoveBox)
             .withWidget(BuiltInWidgets.kSplitButtonChooser)
             .withPosition(13, 6)
             .withSize(8, 2);
@@ -473,9 +470,9 @@ public class AutonomousTab
         autonomousTabData.shootPowerCell = shootPowerCellBox.getSelected();
         autonomousTabData.shootDelay = shootDelayBox.getSelected();
 
-        autonomousTabData.move = moveBox.getSelected();
+        autonomousTabData.moveOffLine = moveOffLineBox.getSelected();
         autonomousTabData.moveDelay = moveDelayBox.getSelected();
-        autonomousTabData.moveDirection = moveDirectionBox.getSelected();
+        autonomousTabData.directionToMove = directionToMoveBox.getSelected();
 
         autonomousTabData.pickUpPowerCell = pickUpPowerCellBox.getSelected();
         autonomousTabData.pickUpLocation = pickUpLocationBox.getSelected();
@@ -485,7 +482,7 @@ public class AutonomousTab
 
     public void checkForNewAutonomousTabData()
     {
-        boolean isSendDataButtonPressed = getSendDataButton();
+        boolean isSendDataButtonPressed = sendDataButton.getSelected();
 
         if(isSendDataButtonPressed && !previousStateOfSendButton)
         {
@@ -495,6 +492,15 @@ public class AutonomousTab
             updateAutonomousTabData();
 
             System.out.println(autonomousTabData);
+            
+            if(isDataValid())
+            {
+                goodToGo.setBoolean(true);   
+            }
+            else
+            {
+                goodToGo.setBoolean(false);
+            }
         }
         
         if (!isSendDataButtonPressed && previousStateOfSendButton)
@@ -508,18 +514,53 @@ public class AutonomousTab
         return autonomousTabData;
     }
 
-    private boolean getSendDataButton()
+    private boolean isDataValid()
     {
-        // Boolean sendData = sendDataButton.getSelected();
-        // boolean sendData = sendDataButton.getBoolean(false);
+        boolean isValid = true;
 
-        // if(sendData)
-        // {
-        //     goodToGo.setBoolean(true);
+        boolean pickUpPowerCell = (autonomousTabData.pickUpPowerCell == PickUpPowerCell.kYes);
 
-        //     // sendDataButton.setBoolean(false);
-        // }
+        boolean moveTowardPowerPort = (autonomousTabData.directionToMove == DirectionToMove.kTowardPowerPort);
 
-        return sendDataButton.getSelected();
+        boolean shootNewPowerCells = (autonomousTabData.shootNewPowerCells == ShootNewPowerCells.kYes);
+
+        boolean startingLocationLeft = (autonomousTabData.startingLocation == StartingLocation.kLeft);
+        boolean startingLocationRight = (autonomousTabData.startingLocation == StartingLocation.kRight);
+
+        boolean pickUpLocation = (autonomousTabData.pickUpLocation == PickUpLocation.kTrench);
+
+
+        //if trying to pick up new cell and moving away from them
+        if(pickUpPowerCell && moveTowardPowerPort)
+        {
+            isValid = false;
+            
+            DriverStation.reportWarning("Cannot Pick Up Power Cells and Move Toward Power Port", false);
+        }
+
+        //if not picking up new cell and trying to shoot it
+        if(!pickUpPowerCell && shootNewPowerCells)
+        {
+            isValid = false;
+            DriverStation.reportWarning("Must Pick Up Power Cell to Shoot New Power Cell", false);
+
+        }
+
+        //if starting left and going to trench
+        if(startingLocationLeft && pickUpLocation)
+        {
+            isValid = false;
+            DriverStation.reportWarning("Advised not to start Left with Pick Up Location: Trench.\n Potential crossover collision.", false);
+        }
+
+        //if starting right and going to rendezvous point
+        if(startingLocationRight && !pickUpLocation)
+        {
+            isValid = false;
+            DriverStation.reportWarning("Advised not to start Right with Pick Up Location: Rendezvous Point.\n Potential crossover collision", false);
+
+        }
+
+        return isValid;
     }
 }
