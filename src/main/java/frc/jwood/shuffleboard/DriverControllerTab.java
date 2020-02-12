@@ -130,7 +130,7 @@ public class DriverControllerTab
             .withSize(width, height);
     }
 
-       /**
+    /**
     * Create a <b>Combo Box</b>
     * <p>Create an entry in the Network Table and add the Combo Box to the Shuffleboard Tab
     */

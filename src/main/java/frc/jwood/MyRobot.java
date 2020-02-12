@@ -1,7 +1,6 @@
 package frc.jwood;
 
 import frc.jwood.controls.DriverController;
-import frc.jwood.controls.DriverController.Action;
 import frc.jwood.shuffleboard.MainShuffleboard;
 
 public class MyRobot
@@ -42,13 +41,16 @@ public class MyRobot
     public void teleopInit()
     {
         mainShuffleboard.setDriverControllerSettings();
+        driverController.resetRumbleIndex();
     }
 
     public void teleopPeriodic()
     {
-        System.out.println(driverController.getRawAxis(0));
-        driverController.getAxis(Action.kMove);
-        driverController.getButton(Action.kIntake);
+        double move = driverController.getAction(DriverController.AxisAction.kMove);
+        boolean intake = driverController.getAction(DriverController.ButtonAction.kIntake);
+        double val = driverController.getRawAxis(DriverController.Axis.kLeftX);
+
+        driverController.checkRumbleEvents();
     }
 
     public void testInit()
