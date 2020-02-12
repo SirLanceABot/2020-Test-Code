@@ -41,7 +41,7 @@ public class MyRobot
 
     public void teleopInit()
     {
-
+        
     }
 
     public void teleopPeriodic()
