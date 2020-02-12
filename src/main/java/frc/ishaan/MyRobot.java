@@ -3,24 +3,33 @@ package frc.ishaan;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import javax.lang.model.util.ElementScanner6;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 public class MyRobot
 {
-    private static TalonSRX motor1 = new TalonSRX(0);
-    private static TalonSRX motor2 = new TalonSRX(1);
+    // private static TalonSRX motor1 = new TalonSRX(0);
+    // private static TalonSRX motor2 = new TalonSRX(1);
     private static Xbox xbox = new Xbox(0);
 
-    private CANSparkMax motor = new CANSparkMax(1, MotorType.kBrushless);
+    private CANSparkMax intakeMotor = new CANSparkMax(2, MotorType.kBrushless);
+    private CANSparkMax shuttleMotor = new CANSparkMax(1, MotorType.kBrushless);
 
     public void myRobot()
     {
         System.out.println(this.getClass().getName() + " : Started Constructor");
         System.out.println("*** ISHAAN's Test Code ***");
-        motor1.configFactoryDefault();
-        motor2.follow(motor1);
 
-        motor1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 30);
+        intakeMotor.restoreFactoryDefaults();
+        shuttleMotor.restoreFactoryDefaults();
+
+        // motor1.configFactoryDefault();
+        // motor2.follow(motor1);
+
+        // motor1.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 30);
 
         // motor1.setSensorPhase(true);
 
@@ -40,7 +49,10 @@ public class MyRobot
 
     public void robotInit()
     {
-
+        intakeMotor.setMotorType(MotorType.kBrushless);
+        shuttleMotor.setMotorType(MotorType.kBrushless);
+        intakeMotor.setIdleMode(IdleMode.kCoast);
+        shuttleMotor.setIdleMode(IdleMode.kCoast);
     }
 
     public void robotPeriodic()
@@ -65,11 +77,41 @@ public class MyRobot
 
     public void teleopPeriodic()
     {
-        motor1.set(ControlMode.PercentOutput, 0.75);
+        double intakeMotorSpeed = 0.50;
+        double shuttleMotorSpeed = 0.75;
+
+        if(xbox.getRawButton(Xbox.Button.kA))
+        {
+            intakeMotor.set(intakeMotorSpeed);
+        }
+        else if(xbox.getRawButton(Xbox.Button.kB))
+        {
+            intakeMotor.set(-intakeMotorSpeed);
+        }
+        else
+        {
+            intakeMotor.set(0.0);
+        }
+
+        if(xbox.getRawButton(Xbox.Button.kRB))
+        {
+            shuttleMotor.set(shuttleMotorSpeed);
+        }
+        else if(xbox.getRawButton(Xbox.Button.kLB))
+        {
+            shuttleMotor.set(-shuttleMotorSpeed);
+        }
+        else
+        {
+            shuttleMotor.set(0.0);
+        }
+
+
+        // motor1.set(ControlMode.PercentOutput, 0.75);
         
         // double targetVelocity_UnitsPer100ms = 50000;//500.0 * 4096 / 600;
         // /* 500 RPM in either direction */
-        System.out.println("Velocity: " + motor1.getSelectedSensorVelocity(0));
+        // System.out.println("Velocity: " + motor1.getSelectedSensorVelocity(0));
         // motor1.set(ControlMode.Velocity, targetVelocity_UnitsPer100ms);
         // double encoderValue = roller.getEncoderValue();
         // encoderValue = Math.round(encoderValue);
