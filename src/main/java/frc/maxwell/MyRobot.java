@@ -5,13 +5,14 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import frc.maxwell.intake.Intake;
-
+import frc.maxwell.Shuttle;
 
 public class MyRobot {
 
     //private static Intake intake = Intake.getInstance();
-    private static Xbox joystick = new Xbox(0);
+    //private static Xbox joystick = new Xbox(0);
+    static Shuttle shuttle = Shuttle.getInstance();
+    private static CANSparkMax motor = new CANSparkMax(2, MotorType.kBrushless);
     public void myRobot()
     {
         System.out.println(this.getClass().getName() + " : Started Constructor");
@@ -47,6 +48,9 @@ public class MyRobot {
     {
         //intake.runFSM();
         //motor.set(joystick.getRawAxis(1));
+        shuttle.runFSM();
+        //]\[motor.set(-0.5);
+        //System.out.println(motor.getEncoder().getPosition());
     }
 
     public void testInit()

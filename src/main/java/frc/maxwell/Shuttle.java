@@ -6,7 +6,8 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import frc.elliot.controls.DriverController;
+import frc.maxwell.*;
+import frc.jwood.controls.*;
 
 /**
  * Class for controlling the shuttling of powercells from the intake to 
@@ -16,7 +17,6 @@ import frc.elliot.controls.DriverController;
  */
 public class Shuttle
 {
-    private static DriverController driverController = DriverController.getInstance();
     /**
      * Enum for the states that the component can operate within
      */
@@ -27,11 +27,11 @@ public class Shuttle
             @Override
             void doAction() 
             {   
-                if(driverController.getRawButton(0))
+                if(OperatorController.getInstance().getRawButton(1)) //assign the correct button
                 {
                     currentState = Transition.findNextState(currentState, Event.ReadyToFeed);
                 }
-                if(sensor5.get())
+                if(!sensor5.get())
                 {
                     currentState = Transition.findNextState(currentState, Event.PowerCellAtFlywheel);
                 }       
@@ -41,7 +41,7 @@ public class Shuttle
                 {
                     currentState = Transition.findNextState(currentState, Event.ShuttleFull);
                 }       
-                else if(sensor1.get())
+                else if(!sensor1.get())
                 {
                     currentState = Transition.findNextState(currentState, Event.PowerCellReadyToShuttle);
                 }
@@ -53,37 +53,46 @@ public class Shuttle
         },
         MovingOnePosition()
         {
-            private double currentPosition = getEncoderPosition();
-            private double targetPosition = currentPosition + inchesToTicks(7);
+
             @Override
             void doAction() 
             {
-                if(driverController.getRawButton(0))
+                if(initFlag)
                 {
-                    currentState = Transition.findNextState(currentState, Event.ReadyToFeed);
+                    currentPosition = getEncoderPosition();
+                    targetPosition = currentPosition + (100/7.0);
+                    initFlag = false;
                 }
-                if(sensor5.get())
+
+                currentPosition = getEncoderPosition();
+                if(!sensor5.get())
                 {
+                    System.out.println("Powercell at Flywheel");
                     currentState = Transition.findNextState(currentState, Event.PowerCellAtFlywheel);
+                    initFlag = true;
                 }       
                 if(isFull())
                 {
+                    System.out.println("Shuttle Full");
                     currentState = Transition.findNextState(currentState, Event.ShuttleFull);
+                    initFlag = true;
                 }       
 
-                System.out.println("Shuttle State: MovingOnePosition");
+                System.out.println("Shuttle State: MovingOnePosition" + "\tTargetPosition: " + targetPosition + "\tCurrent Pos: " + currentPosition);
 
-                if(currentPosition < targetPosition - 10)
+                if(currentPosition < targetPosition - 3)
                 {
-                    motor.set(0.5);
+                    motor.set(0.25);
                 }
-                else if(currentPosition > targetPosition + 10)
+                else if(currentPosition > targetPosition + 3)
                 {
-                    motor.set(-0.5);
+                    motor.set(-0.25);
                 }
                 else
                 {
+                    System.out.println("No Powercell ready");
                     currentState = Transition.findNextState(currentState, Event.NoPowerCellReadyToShuttle);
+                    initFlag = true;
                 }
                 //TODO: Add PID Position Control
             }
@@ -93,14 +102,10 @@ public class Shuttle
             @Override
             void doAction() 
             {
-                if(driverController.getRawButton(0))
-                {
-                    currentState = Transition.findNextState(currentState, Event.ReadyToFeed);
-                }
                 System.out.println("Shuttle State: Unloading");
                 if(!isEmpty())
                 {
-                    setSpeed(0.25); //TODO: Find the right feed speed
+                    setSpeed(0.50); //TODO: Find the right feed speed
                 }
                 else
                 {
@@ -114,11 +119,7 @@ public class Shuttle
             @Override
             void doAction() 
             {
-                if(driverController.getRawButton(0))
-                {
-                    currentState = Transition.findNextState(currentState, Event.ReadyToFeed);
-                }
-                if(sensor5.get())
+                if(!sensor5.get())
                 {
                     currentState = Transition.findNextState(currentState, Event.PowerCellAtFlywheel);
                 }       
@@ -127,17 +128,23 @@ public class Shuttle
                 {
                     stop();
                 }
-                else
+
+
+                if(OperatorController.getInstance().getRawButton(1)) //assign the correct button
                 {
-                    if(sensor1.get())
-                    {
-                        currentState = Transition.findNextState(currentState, Event.PowerCellReadyToShuttle);
-                    }
-                    else
-                    {                    
-                        currentState = Transition.findNextState(currentState, Event.NoPowerCellReadyToShuttle);
-                    }
+                    currentState = Transition.findNextState(currentState, Event.ReadyToFeed);
                 }
+                // else
+                // {
+                //     if(sensor1.get())
+                //     {
+                //         currentState = Transition.findNextState(currentState, Event.PowerCellReadyToShuttle);
+                //     }
+                //     else
+                //     {                    
+                //         currentState = Transition.findNextState(currentState, Event.NoPowerCellReadyToShuttle);
+                //     }
+                // }
             }
         },
         Empty()
@@ -145,16 +152,12 @@ public class Shuttle
             @Override
             void doAction()
             {
-                if(driverController.getRawButton(0))
-                {
-                    currentState = Transition.findNextState(currentState, Event.ReadyToFeed);
-                }
-                if(sensor5.get())
+                if(!sensor5.get())
                 {
                     currentState = Transition.findNextState(currentState, Event.PowerCellAtFlywheel);
                 }       
                 System.out.println("Shuttle State: Empty");
-                if(sensor1.get())
+                if(!sensor1.get())
                 {
                     currentState = Transition.findNextState(currentState, Event.PowerCellReadyToShuttle);
                 }
@@ -188,22 +191,22 @@ public class Shuttle
         // TRANSITION_O_2(State.Off,                       Event.ShuttleEmpty,                         State.Off),
         TRANSITION_O_3(State.Off,                       Event.ShuttleFull,                          State.Full),
         TRANSITION_O_4(State.Off,                       Event.NoPowerCellReadyToShuttle,            State.Off),
-        // TRANSITION_O_5(State.Off,                       Event.PowerCellAtFlywheel,                  State.Off),
+        TRANSITION_O_5(State.Off,                       Event.PowerCellAtFlywheel,                  State.Off),
         TRANSITION_O_6(State.Off,                       Event.ReadyToFeed,                          State.UnloadingShuttle),
         
         // TRANSITION_M_1(State.MovingOnePosition,         Event.PowerCellReadyToShuttle,              State.MovingOnePosition),
         // TRANSITION_M_2(State.MovingOnePosition,         Event.ShuttleEmpty,                         State.Off),
         TRANSITION_M_3(State.MovingOnePosition,         Event.ShuttleFull,                          State.Full),
         TRANSITION_M_4(State.MovingOnePosition,         Event.NoPowerCellReadyToShuttle,            State.Off),
-        // TRANSITION_M_5(State.MovingOnePosition,         Event.PowerCellAtFlywheel,                  State.Off),
-        TRANSITION_M_6(State.MovingOnePosition,         Event.ReadyToFeed,                          State.UnloadingShuttle),
+        TRANSITION_M_5(State.MovingOnePosition,         Event.PowerCellAtFlywheel,                  State.Off),
+        // TRANSITION_M_6(State.MovingOnePosition,         Event.ReadyToFeed,                          State.Off),
 
         // TRANSITION_U_1(State.UnloadingClip,             Event.PowerCellReadyToShuttle,              State.UnloadingClip),
         TRANSITION_U_2(State.UnloadingShuttle,             Event.ShuttleEmpty,                         State.Off),
         // TRANSITION_U_3(State.UnloadingClip,             Event.ShuttleFull,                          State.Off),
         // TRANSITION_U_4(State.UnloadingClip,             Event.NoPowerCellReadyToShuttle,            State.UnloadingClip),
         // TRANSITION_U_5(State.UnloadingClip,             Event.PowerCellAtFlywheel,                  State.Off),
-        TRANSITION_U_6(State.UnloadingShuttle,             Event.ReadyToFeed,                          State.UnloadingShuttle),
+        // TRANSITION_U_6(State.UnloadingClip,             Event.ReadyToFeed,                          State.Off),
 
         // TRANSITION_F_1(State.Full,                      Event.PowerCellReadyToShuttle,              State.Off),
         // TRANSITION_F_2(State.Full,                      Event.ShuttleEmpty,                         State.Off),
@@ -212,12 +215,12 @@ public class Shuttle
         // TRANSITION_F_5(State.Full,                      Event.PowerCellAtFlywheel,                  State.Off),
         TRANSITION_F_6(State.Full,                      Event.ReadyToFeed,                          State.UnloadingShuttle),
 
-        TRANSITION_E_1(State.Empty,                     Event.PowerCellReadyToShuttle,              State.MovingOnePosition),
+        TRANSITION_E_1(State.Empty,                     Event.PowerCellReadyToShuttle,              State.MovingOnePosition);
         // TRANSITION_E_2(State.Empty,                     Event.ShuttleEmpty,                         State.Off),
         // TRANSITION_E_3(State.Empty,                     Event.ShuttleFull,                          State.Off),
         // TRANSITION_E_4(State.Empty,                     Event.NoPowerCellReadyToShuttle,            State.MovingOnePosition),
         // TRANSITION_E_5(State.Empty,                     Event.PowerCellAtFlywheel,                  State.Off),
-        TRANSITION_E_6(State.Empty,                     Event.ReadyToFeed,                          State.UnloadingShuttle);
+        // TRANSITION_E_6(State.Empty,                     Event.ReadyToFeed,                          State.Off);
 
         //-------------------------------------------------------------------------------------------------------------------
         private final State currentState;
@@ -253,7 +256,7 @@ public class Shuttle
                     return transition.nextState;
                 }
             }
-            System.out.println("ERROR: NO STATE TO TRANSITION TO FOUND");
+            System.out.println("ERROR: NO STATE TO TRANSITION TO FOUND" + "\tCURRENT: " + currentState + "\tEVENT: " + event);
             return currentState; // throw an error if here
         }
     }
@@ -261,17 +264,19 @@ public class Shuttle
     private static final int MOTOR_ID = 1; //TOD0: Change to actual motor id
     private static final double TICKS_PER_ROTATION = 4096.0;
 
+    private static double currentPosition = 0;
+    private static double targetPosition = 0;
+    private static boolean initFlag = true;
     private static CANSparkMax motor = new CANSparkMax(MOTOR_ID, MotorType.kBrushless);
     private static CANEncoder encoder = new CANEncoder(motor);
     private static CANPIDController pidController = new CANPIDController(motor);
     //private static double currentPosition;
-    private static double targetPosition;
     private static DigitalInput sensor1 = new DigitalInput(0);
-    private static DigitalInput sensor2 = new DigitalInput(0);
-    private static DigitalInput sensor3 = new DigitalInput(0);
-    private static DigitalInput sensor4 = new DigitalInput(0);
-    private static DigitalInput sensor5 = new DigitalInput(0);
-    private static State currentState = State.Empty;
+    private static DigitalInput sensor2 = new DigitalInput(1);
+    private static DigitalInput sensor3 = new DigitalInput(2);
+    private static DigitalInput sensor4 = new DigitalInput(3);
+    private static DigitalInput sensor5 = new DigitalInput(4);
+    private static State currentState = State.Off;
     private static DriverController controller = DriverController.getInstance();
     private static Shuttle instance = new Shuttle();
 
@@ -306,8 +311,9 @@ public class Shuttle
         motor.set(0.0);
     }
     
-    private static double getEncoderPosition()
+    public static double getEncoderPosition()
     {
+        //System.out.println("initialized values");
         return encoder.getPosition();
     }
     
@@ -318,7 +324,7 @@ public class Shuttle
 
     private static boolean isFull()
     {
-        if(sensor1.get() && sensor2.get() && sensor3.get() && sensor4.get() && sensor5.get())
+        if(!sensor1.get() && !sensor2.get() && !sensor3.get() && !sensor4.get() && !sensor5.get())
         {
             return true;
         }
@@ -330,7 +336,7 @@ public class Shuttle
 
     private static boolean isEmpty()
     {
-        if(!sensor1.get() && !sensor2.get() && !sensor3.get() && !sensor4.get() && !sensor5.get())
+        if(sensor1.get() && sensor2.get() && sensor3.get() && sensor4.get() && sensor5.get())
         {
             return true;
         }
@@ -364,7 +370,7 @@ public class Shuttle
         return inches * TICKS_PER_ROTATION;
     }
 
-    private void runFSM()
+    public void runFSM()
     {
         currentState.doAction();
     }

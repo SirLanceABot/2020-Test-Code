@@ -12,7 +12,7 @@ public class OperatorController extends Xbox
         System.out.println(this.getClass().getName() + " : Started Constructor");
     }
 
-    public OperatorController getInstance()
+    public static OperatorController getInstance()
     {
         return instance;
     }
