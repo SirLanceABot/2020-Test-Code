@@ -1,5 +1,6 @@
 package frc.joey;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import frc.joey.controls.DriverController;
 import frc.joey.shuffleboard.MainShuffleboard;
 
@@ -7,6 +8,7 @@ public class MyRobot
 {
     private MainShuffleboard mainShuffleboard = MainShuffleboard.getInstance();
     private DriverController driverController = DriverController.getInstance();
+    private DigitalInput magnetSensor = new DigitalInput(0);
 
     private boolean isPreAutonomous = true;
     
@@ -45,7 +47,7 @@ public class MyRobot
 
     public void teleopPeriodic()
     {
-        System.out.println(driverController.getRawAxis(0));
+        System.out.println(magnetSensor.get());
     }
 
     public void testInit()
