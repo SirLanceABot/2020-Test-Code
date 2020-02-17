@@ -1,5 +1,7 @@
 package frc.jwood.components;
 
+import frc.jwood.robot.Port;
+
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
@@ -9,7 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Roller
 {
 
-    private static final int MASTER_MOTOR_ID = 1;
+    // private static final int MASTER_MOTOR_ID = 1;
     //private static final int SLAVE_MOTOR_ID = 2;
 
     private static final double kP = 0.000351; 
@@ -21,7 +23,7 @@ public class Roller
     private static final double kMinOutput = -1;
     private static final double maxRPM = 210;
 
-    private static CANSparkMax masterMotor = new CANSparkMax(MASTER_MOTOR_ID, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
+    private static CANSparkMax masterMotor = new CANSparkMax(Port.Motor.INTAKE_ROLLER, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
     //private static CANSparkMax slaveMotor = new CANSparkMax(SLAVE_MOTOR_ID, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
 
     private static CANEncoder encoder = masterMotor.getEncoder();

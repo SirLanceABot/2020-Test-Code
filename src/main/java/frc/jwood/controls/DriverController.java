@@ -3,6 +3,7 @@ package frc.jwood.controls;
 import java.util.ArrayList;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.jwood.robot.Port;
 
 /**
  * The DriverController class used to control the robot
@@ -73,7 +74,7 @@ public class DriverController extends Xbox
     // private double rumbleIntensity = 0.5;
     
     private final DriverStation dStation = DriverStation.getInstance();
-    private static final DriverController instance = new DriverController(0);
+    private static final DriverController instance = new DriverController(Port.Controller.DRIVER);
 
     private DriverController(int port)
     {

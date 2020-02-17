@@ -1,14 +1,58 @@
 package frc.jwood;
 
-import frc.jwood.controls.DriverController;
-import frc.jwood.shuffleboard.MainShuffleboard;
+import frc.jwood.robot.Autonomous;
+import frc.jwood.robot.Disabled;
+import frc.jwood.robot.Teleop;
+import frc.jwood.robot.Test;
 
 public class MyRobot
 {
-    private MainShuffleboard mainShuffleboard = MainShuffleboard.getInstance();
-    private DriverController driverController = DriverController.getInstance();
+    public enum RobotState
+    {
+        kNone, kStartup, kBeforeGame, kAutonomous, kBetweenAutoAndTeleop, kTeleop, kAfterGame, kTest;
 
-    private boolean isPreAutonomous = true;
+        public RobotState nextState()
+        {
+            RobotState nextRobotState = kNone;
+
+            switch(this)
+            {
+                case kNone:
+                    nextRobotState = kNone;
+                    break;
+                case kStartup:
+                    nextRobotState = kBeforeGame;
+                    break;
+                case kBeforeGame:
+                    nextRobotState = kAutonomous;
+                    break;
+                case kAutonomous:
+                    nextRobotState = kBetweenAutoAndTeleop;
+                    break;
+                case kBetweenAutoAndTeleop:
+                    nextRobotState = kTeleop;
+                    break;
+                case kTeleop:
+                    nextRobotState = kAfterGame;
+                    break;
+                case kAfterGame:
+                    nextRobotState = kTest;
+                    break;
+                case kTest:
+                    nextRobotState = kBeforeGame;
+                    break;    
+            }
+
+            return nextRobotState;
+        }
+    }
+
+    private Autonomous autonomous = Autonomous.getInstance();
+    private Teleop teleop = Teleop.getInstance();
+    private Test test = Test.getInstance();
+    private Disabled disabled = Disabled.getInstance();
+
+    private static RobotState robotState = RobotState.kNone;
     
     public void myRobot()
     {
@@ -20,7 +64,7 @@ public class MyRobot
 
     public void robotInit()
     {
-
+        robotState = RobotState.kStartup;
     }
 
     public void robotPeriodic()
@@ -30,50 +74,55 @@ public class MyRobot
 
     public void autonomousInit()
     {
-        isPreAutonomous = false;
+        robotState = RobotState.kAutonomous;
+
+        autonomous.init();
     }
 
     public void autonomousPeriodic()
     {
-
+        autonomous.periodic();
     }
 
     public void teleopInit()
     {
-        mainShuffleboard.setDriverControllerSettings();
-        driverController.resetRumbleIndex();
+        robotState = RobotState.kTeleop;
+
+        teleop.init();
     }
 
     public void teleopPeriodic()
     {
-        double move = driverController.getAction(DriverController.AxisAction.kMove);
-        boolean intake = driverController.getAction(DriverController.ButtonAction.kIntake);
-        double val = driverController.getRawAxis(DriverController.Axis.kLeftX);
-
-        driverController.checkRumbleEvents();
+        teleop.periodic();
     }
 
     public void testInit()
     {
-        isPreAutonomous = true;
+        robotState = RobotState.kTest;
+
+        test.init();
     }
 
     public void testPeriodic()
     {
-
+        test.periodic();
     }
 
     public void disabledInit()
     {
+        robotState = robotState.nextState();
 
+        disabled.init();
     }
 
     public void disabledPeriodic()
     {
-        if(isPreAutonomous)
-        {
-            mainShuffleboard.checkForNewAutonomousTabData();
-        }
+        disabled.periodic();
+    }
+
+    public static RobotState getRobotState()
+    {
+        return robotState;
     }
 
 }

@@ -1,8 +1,10 @@
 package frc.jwood.controls;
 
+import frc.jwood.robot.Port;
+
 public class OperatorController extends Xbox
 {
-    private static final OperatorController instance = new OperatorController(0);
+    private static final OperatorController instance = new OperatorController(Port.Controller.OPERATOR);
 
     private OperatorController(int port)
     {
