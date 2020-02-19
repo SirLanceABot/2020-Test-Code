@@ -1,5 +1,6 @@
 package frc.jwood.robot;
 
+import frc.jwood.components.Drivetrain;
 import frc.jwood.controls.DriverController;
 import frc.jwood.shuffleboard.MainShuffleboard;
 
@@ -7,6 +8,7 @@ public class Teleop
 {
     private MainShuffleboard mainShuffleboard = MainShuffleboard.getInstance();
     private DriverController driverController = DriverController.getInstance();
+    private Drivetrain drivetrain = Drivetrain.getInstance();
 
     private static Teleop instance = new Teleop();
 
@@ -35,7 +37,7 @@ public class Teleop
     public void init()
     {
         mainShuffleboard.setDriverControllerSettings();
-        driverController.resetRumbleIndex();
+        // driverController.resetRumbleIndex();
     }
 
     /**
@@ -44,10 +46,15 @@ public class Teleop
     public void periodic()
     {
         double move = driverController.getAction(DriverController.AxisAction.kMove);
-        boolean intake = driverController.getAction(DriverController.ButtonAction.kIntake);
-        double val = driverController.getRawAxis(DriverController.Axis.kLeftX);
+        // boolean intake = driverController.getAction(DriverController.ButtonAction.kIntake);
 
-        driverController.checkRumbleEvents();
+        drivetrain.setRightPower(move);
+        drivetrain.setLeftPower(move);
+
+        mainShuffleboard.updateEncoderValues();
+
+
+        // driverController.checkRumbleEvents();
     }
 
 }

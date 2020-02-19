@@ -21,6 +21,7 @@ public class MainShuffleboard
 {
     private AutonomousTab autonomousTab = AutonomousTab.getInstance();
     private DriverControllerTab driverControllerTab = DriverControllerTab.getInstance();
+    private SensorsTab sensorsTab = SensorsTab.getInstance();
 
     private static MainShuffleboard instance = new MainShuffleboard();
 
@@ -55,5 +56,12 @@ public class MainShuffleboard
     public void setDriverControllerSettings()
     {
         driverControllerTab.setDriverControllerAxisSettings();
+    }
+
+    // ------------------------------------------------------------------------------------
+    // DRIVER CONTROLLER TAB
+    public void updateEncoderValues()
+    {
+        sensorsTab.updateEncoderValues();
     }
 }
