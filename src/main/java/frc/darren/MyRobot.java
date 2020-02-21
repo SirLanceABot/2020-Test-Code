@@ -4,11 +4,16 @@ package frc.darren;
 
 public class MyRobot
 {
-    private static Shifter shifter = Shifter.getInstance();
-    private static Wrist wrist = Wrist.getInstance();
+    private static Shroud shroud = Shroud.getInstance();
+    // private static Shifter shifter = Shifter.getInstance();
+    // private static Wrist wrist = Wrist.getInstance();
     private static Xbox xbox = new Xbox(0);
     
-    double newTimeOut = 1.0;
+    // double newTimeOut = 1.0;
+
+    boolean blockForward, blockReverse; // soft limit switches for this example
+    int position = 0;
+    double speed = 1.0;                  // initial speed for this example
 
     public void myRobot()
     {
@@ -40,14 +45,16 @@ public class MyRobot
     public void teleopInit()
     {
         // Choose what to run by commenting
-        testShifterInit();
+        testShroudInit();
+        // testShifterInit();
         // testWristInit();
     }
 
     public void teleopPeriodic()
     {
         // Choose what to run by commenting
-        testShifterPeriodic();
+        testShroudPeriodic();
+        // testShifterPeriodic();
         // testWristPeriodic();
     }
 
@@ -70,160 +77,188 @@ public class MyRobot
 
     }
 
-    private void testShifterInit()
+    private void testShroudInit()
     {
-        System.out.println("***Synchronizing pneumatics***");
-        System.out.println("Force shifting down shifter");
-        shifter.forceShiftDown();
+	    position = 0;
+	    speed = 1.0; // initial speed for this example
+	    shroud.resetCounter();
     }
 
-    private void testShifterPeriodic()
+    private void testShroudPeriodic()
     {
-        if(xbox.getRawButton(Xbox.Button.kA))
-        {
-            System.out.println("Input button A");
-            System.out.println("Shifter shifting up");
-            shifter.shiftUp();
-        }
-        else if(xbox.getRawButton(Xbox.Button.kB))
-        {
-            System.out.println("Input button B");
-            System.out.println("Shifter shifting down");
-            shifter.shiftDown();
-        }
-        else if(xbox.getRawButton(Xbox.Button.kX))
-        {
-            System.out.println("Input button X");
-            System.out.println("Force shifting up shifter");
-            shifter.forceShiftUp();
-        }
-        else if(xbox.getRawButton(Xbox.Button.kY))
-        {
-            System.out.println("Input button Y");
-            System.out.println("Force shifting down shifter");
-            shifter.forceShiftDown();
-        }
-        else if(xbox.getRawButton(Xbox.Button.kStart))
-        {
-            if(newTimeOut == 10.0)
-            {
-                System.out.println("Time out upper limit reached at 10.0s");
-            }
-            else
-            {
-                newTimeOut = newTimeOut + 0.5;
-                System.out.println("Increasing the new time out to " + Double.toString(newTimeOut) + "s");
-            }
-        }
-        else if(xbox.getRawButton(Xbox.Button.kBack))
-        {
-            if(newTimeOut == 1.0)
-            {
-                System.out.println("Time out lower limit reached at 1.0s");
-            }
-            else
-            {
-                newTimeOut = newTimeOut - 0.5;
-                System.out.println("Decreasing the new time out to " + Double.toString(newTimeOut) + "s");
-            }
-        }
-        else if(xbox.getRawButton(Xbox.Button.kLB))
-        {
-            System.out.println("Setting new shifting up time out at " + Double.toString(newTimeOut) + "s");
-            shifter.setShiftingUpTimeOut(newTimeOut);
-        }
-        else if(xbox.getRawButton(Xbox.Button.kRB))
-        {
-            System.out.println("Setting new shifting down time out at " + Double.toString(newTimeOut) + "s");
-            shifter.setShiftingDownTimeOut(newTimeOut);
-        }
+        position = shroud.getPosition();
+		System.out.println("Position " + position + ", Speed " + speed);
 
-        if(shifter.isLowGear())
-        {
-            System.out.println("Shifter is in low gear");
-        }
-        else if(shifter.isHighGear())
-        {
-            System.out.println("Shifter is in high gear");
-        }
+		if (position >= 175) blockForward = true; // example check for at limit switch
+		else blockForward = false;
+
+		if (position <= 0) blockReverse = true; // example check for at limit switch
+		else blockReverse = false;
+
+		if (blockForward) speed = -1.0; // example if at a limit switch go back the other way
+		if (blockReverse) speed = +1.0;
+
+		// call CheckDirectionChange with same speed as Set() with (or before or after) every motor Set() to update position if reversing direction
+		shroud.setSpeed(shroud.checkDirectionChange(speed)); // refresh or change speed, update position if changing direction
+		// Wait(0.01); // ticks won't be lost but wait less to see them all here and respond faster
+
+        // shroud.setSpeed(xbox.getRawAxis(Xbox.Axis.kLeftY));
+        // System.out.println("Shroud encoder position = " + shroud.getEncoderPosition());
     }
 
-    private void testWristInit()
-    {
-        System.out.println("***Synchronizing pneumatics***");
-        System.out.println("Force raising wrist");
-        wrist.forceRaise();
-    }
+    // private void testShifterInit()
+    // {
+    //     System.out.println("***Synchronizing pneumatics***");
+    //     System.out.println("Force shifting down shifter");
+    //     shifter.forceShiftDown();
+    // }
 
-    private void testWristPeriodic()
-    {
-        if(xbox.getRawButton(Xbox.Button.kA))
-        {
-            System.out.println("Input button A");
-            System.out.println("Wrist lowering");
-            wrist.lower();
-        }
-        else if(xbox.getRawButton(Xbox.Button.kB))
-        {
-            System.out.println("Input button B");
-            System.out.println("Wrist raising");
-            wrist.raise();
-        }
-        else if(xbox.getRawButton(Xbox.Button.kX))
-        {
-            System.out.println("Input button X");
-            System.out.println("Force lowering wrist");
-            wrist.forceLower();
-        }
-        else if(xbox.getRawButton(Xbox.Button.kY))
-        {
-            System.out.println("Input button Y");
-            System.out.println("Force raising wrist");
-            wrist.forceRaise();
-        }
-        else if(xbox.getRawButton(Xbox.Button.kStart))
-        {
-            if(newTimeOut == 10.0)
-            {
-                System.out.println("Time out upper limit reached at 10.0s");
-            }
-            else
-            {
-                newTimeOut = newTimeOut + 0.5;
-                System.out.println("Increasing the new time out to " + Double.toString(newTimeOut) + "s");
-            }
-        }
-        else if(xbox.getRawButton(Xbox.Button.kBack))
-        {
-            if(newTimeOut == 1.0)
-            {
-                System.out.println("Time out lower limit reached at 1.0s");
-            }
-            else
-            {
-                newTimeOut = newTimeOut - 0.5;
-                System.out.println("Decreasing the new time out to " + Double.toString(newTimeOut) + "s");
-            }
-        }
-        else if(xbox.getRawButton(Xbox.Button.kLB))
-        {
-            System.out.println("Setting new lowering time out at " + Double.toString(newTimeOut) + "s");
-            wrist.setLoweringTimeOut(newTimeOut);
-        }
-        else if(xbox.getRawButton(Xbox.Button.kRB))
-        {
-            System.out.println("Setting new raising time out at " + Double.toString(newTimeOut) + "s");
-            wrist.setRaisingTimeOut(newTimeOut);
-        }
+    // private void testShifterPeriodic()
+    // {
+    //     if(xbox.getRawButton(Xbox.Button.kA))
+    //     {
+    //         System.out.println("Input button A");
+    //         System.out.println("Shifter shifting up");
+    //         shifter.shiftUp();
+    //     }
+    //     else if(xbox.getRawButton(Xbox.Button.kB))
+    //     {
+    //         System.out.println("Input button B");
+    //         System.out.println("Shifter shifting down");
+    //         shifter.shiftDown();
+    //     }
+    //     else if(xbox.getRawButton(Xbox.Button.kX))
+    //     {
+    //         System.out.println("Input button X");
+    //         System.out.println("Force shifting up shifter");
+    //         shifter.forceShiftUp();
+    //     }
+    //     else if(xbox.getRawButton(Xbox.Button.kY))
+    //     {
+    //         System.out.println("Input button Y");
+    //         System.out.println("Force shifting down shifter");
+    //         shifter.forceShiftDown();
+    //     }
+    //     else if(xbox.getRawButton(Xbox.Button.kStart))
+    //     {
+    //         if(newTimeOut == 10.0)
+    //         {
+    //             System.out.println("Time out upper limit reached at 10.0s");
+    //         }
+    //         else
+    //         {
+    //             newTimeOut = newTimeOut + 0.5;
+    //             System.out.println("Increasing the new time out to " + Double.toString(newTimeOut) + "s");
+    //         }
+    //     }
+    //     else if(xbox.getRawButton(Xbox.Button.kBack))
+    //     {
+    //         if(newTimeOut == 1.0)
+    //         {
+    //             System.out.println("Time out lower limit reached at 1.0s");
+    //         }
+    //         else
+    //         {
+    //             newTimeOut = newTimeOut - 0.5;
+    //             System.out.println("Decreasing the new time out to " + Double.toString(newTimeOut) + "s");
+    //         }
+    //     }
+    //     else if(xbox.getRawButton(Xbox.Button.kLB))
+    //     {
+    //         System.out.println("Setting new shifting up time out at " + Double.toString(newTimeOut) + "s");
+    //         shifter.setShiftingUpTimeOut(newTimeOut);
+    //     }
+    //     else if(xbox.getRawButton(Xbox.Button.kRB))
+    //     {
+    //         System.out.println("Setting new shifting down time out at " + Double.toString(newTimeOut) + "s");
+    //         shifter.setShiftingDownTimeOut(newTimeOut);
+    //     }
 
-        if(wrist.isUp())
-        {
-            System.out.println("Arm is up");
-        }
-        else if(wrist.isDown())
-        {
-            System.out.println("Arm is down");
-        }
-    }
+    //     if(shifter.isLowGear())
+    //     {
+    //         System.out.println("Shifter is in low gear");
+    //     }
+    //     else if(shifter.isHighGear())
+    //     {
+    //         System.out.println("Shifter is in high gear");
+    //     }
+    // }
 
+    // private void testWristInit()
+    // {
+    //     System.out.println("***Synchronizing pneumatics***");
+    //     System.out.println("Force raising wrist");
+    //     wrist.forceRaise();
+    // }
+
+    // private void testWristPeriodic()
+    // {
+    //     if(xbox.getRawButton(Xbox.Button.kA))
+    //     {
+    //         System.out.println("Input button A");
+    //         System.out.println("Wrist lowering");
+    //         wrist.lower();
+    //     }
+    //     else if(xbox.getRawButton(Xbox.Button.kB))
+    //     {
+    //         System.out.println("Input button B");
+    //         System.out.println("Wrist raising");
+    //         wrist.raise();
+    //     }
+    //     else if(xbox.getRawButton(Xbox.Button.kX))
+    //     {
+    //         System.out.println("Input button X");
+    //         System.out.println("Force lowering wrist");
+    //         wrist.forceLower();
+    //     }
+    //     else if(xbox.getRawButton(Xbox.Button.kY))
+    //     {
+    //         System.out.println("Input button Y");
+    //         System.out.println("Force raising wrist");
+    //         wrist.forceRaise();
+    //     }
+    //     else if(xbox.getRawButton(Xbox.Button.kStart))
+    //     {
+    //         if(newTimeOut == 10.0)
+    //         {
+    //             System.out.println("Time out upper limit reached at 10.0s");
+    //         }
+    //         else
+    //         {
+    //             newTimeOut = newTimeOut + 0.5;
+    //             System.out.println("Increasing the new time out to " + Double.toString(newTimeOut) + "s");
+    //         }
+    //     }
+    //     else if(xbox.getRawButton(Xbox.Button.kBack))
+    //     {
+    //         if(newTimeOut == 1.0)
+    //         {
+    //             System.out.println("Time out lower limit reached at 1.0s");
+    //         }
+    //         else
+    //         {
+    //             newTimeOut = newTimeOut - 0.5;
+    //             System.out.println("Decreasing the new time out to " + Double.toString(newTimeOut) + "s");
+    //         }
+    //     }
+    //     else if(xbox.getRawButton(Xbox.Button.kLB))
+    //     {
+    //         System.out.println("Setting new lowering time out at " + Double.toString(newTimeOut) + "s");
+    //         wrist.setLoweringTimeOut(newTimeOut);
+    //     }
+    //     else if(xbox.getRawButton(Xbox.Button.kRB))
+    //     {
+    //         System.out.println("Setting new raising time out at " + Double.toString(newTimeOut) + "s");
+    //         wrist.setRaisingTimeOut(newTimeOut);
+    //     }
+
+    //     if(wrist.isUp())
+    //     {
+    //         System.out.println("Arm is up");
+    //     }
+    //     else if(wrist.isDown())
+    //     {
+    //         System.out.println("Arm is down");
+    //     }
+    // }
 }
