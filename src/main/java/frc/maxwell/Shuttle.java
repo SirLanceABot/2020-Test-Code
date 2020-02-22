@@ -276,6 +276,7 @@ public class Shuttle
     private static DigitalInput sensor3 = new DigitalInput(2);
     private static DigitalInput sensor4 = new DigitalInput(3);
     private static DigitalInput sensor5 = new DigitalInput(4);
+    private static DigitalInput sensor6 = new DigitalInput(5);
     private static State currentState = State.Off;
     private static DriverController controller = DriverController.getInstance();
     private static Shuttle instance = new Shuttle();
@@ -324,7 +325,7 @@ public class Shuttle
 
     private static boolean isFull()
     {
-        if(!sensor1.get() && !sensor2.get() && !sensor3.get() && !sensor4.get() && !sensor5.get())
+        if(!sensor1.get() && !sensor2.get() && !sensor3.get() && !sensor4.get() && !sensor5.get() && !sensor6.get())
         {
             return true;
         }
@@ -336,7 +337,7 @@ public class Shuttle
 
     private static boolean isEmpty()
     {
-        if(sensor1.get() && sensor2.get() && sensor3.get() && sensor4.get() && sensor5.get())
+        if(sensor1.get() && sensor2.get() && sensor3.get() && sensor4.get() && sensor5.get() && sensor6.get())
         {
             return true;
         }
