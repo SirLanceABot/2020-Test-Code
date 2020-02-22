@@ -1,10 +1,12 @@
 package frc.jwood.robot;
 
+import edu.wpi.first.wpilibj.Timer;
 import frc.jwood.components.Shroud;
 
 public class Test
 {
     private static Shroud shroud = Shroud.getInstance();
+    private static Timer timer = new Timer();
     private static Test instance = new Test();
 
     /**
@@ -31,7 +33,10 @@ public class Test
      */
     public void init()
     {
-
+        shroud.resetCounter();
+        shroud.resetPosition();
+        timer.reset();
+        timer.start();
     }
 
     /**
@@ -39,7 +44,23 @@ public class Test
      */
     public void periodic()
     {
-        shroud.setSpeed(0.5);
+        if(timer.get() < 2.0)
+        {
+            shroud.setSpeed(0.2);
+        }
+        else if(timer.get() < 4.0)
+        {
+            shroud.setSpeed(0.0);
+        }
+        else if(timer.get() < 6.0)
+        {
+            shroud.setSpeed(-0.2);
+        }
+        else
+        {
+            shroud.setSpeed(0.0);
+            timer.stop();
+        }
     }
 
 }

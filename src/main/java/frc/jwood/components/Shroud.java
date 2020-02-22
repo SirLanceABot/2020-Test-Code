@@ -1,12 +1,14 @@
 package frc.jwood.components;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+// import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.AnalogTrigger;
+// import edu.wpi.first.wpilibj.AnalogInput;
+// import edu.wpi.first.wpilibj.AnalogTrigger;
 import edu.wpi.first.wpilibj.Counter;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Encoder;
 
 // import wpilibj.Bosch;
 
@@ -17,9 +19,11 @@ import edu.wpi.first.wpilibj.Counter;
 public class Shroud
 {
     private TalonSRX motor = new TalonSRX(0);
-    private AnalogInput analogInput = new AnalogInput(3);
-    private AnalogTrigger analogTrigger = new AnalogTrigger(analogInput);
-    private Counter counter = new Counter(analogTrigger);
+    // private AnalogInput analogInput = new AnalogInput(3);
+    // private AnalogTrigger analogTrigger = new AnalogTrigger(analogInput);
+    private DigitalInput digitalInput = new DigitalInput(0);
+    
+    private Counter counter = new Counter(digitalInput);
 
     private double previousSpeed = 0.0;
     private int position = 0;
@@ -32,7 +36,9 @@ public class Shroud
         motor.configFactoryDefault();
         // motor.configSelectedFeedbackSensor(FeedbackDevice.SensorSum);
         counter.reset();
-        analogTrigger.setLimitsVoltage(0,0.5);//3.5, 3.8);   // Values higher than the highest minimum (pulse floor), lower than the lowest maximum (pulse ceiling)
+        // digitalInput.setUpSourceEdge(true, false);
+
+        // analogTrigger.setLimitsVoltage(0,0.5);//3.5, 3.8);   // Values higher than the highest minimum (pulse floor), lower than the lowest maximum (pulse ceiling)
         System.out.println(this.getClass().getName() + ": Finished Constructing");
     }
 
@@ -49,7 +55,10 @@ public class Shroud
     {
         motor.set(ControlMode.PercentOutput, checkDirectionChange(speed));
         // System.out.println(motor.getSensorCollection().getAnalogInRaw());
-        System.out.println(position + "   " + analogInput.getVoltage());
+        // System.out.println(position + "   " + analogInput.getVoltage());
+        // System.out.println(position + "  " + counter.get());// + "  " + digitalInput.get());
+        boolean di = digitalInput.get();
+        System.out.println((di ? "|---" : "---|") + "  "  + counter.get() + "  " + position);
     }
 
     public double checkDirectionChange(double newSpeed)
@@ -104,5 +113,10 @@ public class Shroud
     public void resetCounter()
     {
         counter.reset();
+    }
+
+    public void resetPosition()
+    {
+        position = 0;
     }
 }
