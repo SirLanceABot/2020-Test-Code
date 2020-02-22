@@ -1,7 +1,10 @@
 package frc.jwood.robot;
 
+import frc.jwood.components.Shroud;
+
 public class Test
 {
+    private static Shroud shroud = Shroud.getInstance();
     private static Test instance = new Test();
 
     /**
@@ -36,7 +39,7 @@ public class Test
      */
     public void periodic()
     {
-
+        shroud.setSpeed(0.5);
     }
 
 }
