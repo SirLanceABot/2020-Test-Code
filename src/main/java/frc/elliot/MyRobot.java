@@ -8,6 +8,8 @@ import frc.elliot.driverTest.Xbox.Axis;
 import frc.elliot.driverTest.DriveTrain;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.CANSparkMax;
+
 import edu.wpi.first.wpilibj.I2C;
 
 public class MyRobot
@@ -19,6 +21,8 @@ public class MyRobot
     private static AHRS navX = new AHRS(I2C.Port.kMXP);
 
     private static DriveTrain driveTrain = DriveTrain.getInstance();
+
+    private static CANSparkMax motor = new CANSparkMax(4, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
 
     private static Xbox xbox = Xbox.getInstance();
 
@@ -56,15 +60,17 @@ public class MyRobot
 
     public void teleopInit()
     {
-        
+
     }
 
     public void teleopPeriodic()
     {
-        move = xbox.getRawAxis(Axis.kLeftY);
-        rotate = xbox.getRawAxis(Axis.kRightX);
+        //move = xbox.getRawAxis(Axis.kLeftY);
+        //rotate = xbox.getRawAxis(Axis.kRightX);
 
-        driveTrain.westCoastDrive(move, rotate, isSquared);
+        motor.set(0.1);
+
+        //driveTrain.westCoastDrive(move / 10.0, rotate / 10.0, isSquared);
 
         //System.out.println(navX.getRawGyroX());
         //System.out.println(navX.getRawGyroY());
