@@ -12,7 +12,7 @@ public class DriveTrain extends DifferentialDrive
     private static CANSparkMax leftRearDrive = new CANSparkMax(3, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
     private static CANSparkMax leftFrontDrive = new CANSparkMax(4, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
 
-    private static SpeedControllerGroup rightMotors = new SpeedControllerGroup(rightFrontDrive, rightFrontDrive);
+    private static SpeedControllerGroup rightMotors = new SpeedControllerGroup(rightFrontDrive, rightRearDrive);
     private static SpeedControllerGroup leftMotors = new SpeedControllerGroup(leftRearDrive, leftFrontDrive);
 
     private static DriveTrain driveTrain = new DriveTrain();
@@ -26,8 +26,8 @@ public class DriveTrain extends DifferentialDrive
         leftRearDrive.restoreFactoryDefaults();
         leftFrontDrive.restoreFactoryDefaults();
 
-        rightFrontDrive.setInverted(true);
-        rightRearDrive.setInverted(true);
+        rightFrontDrive.setInverted(false);
+        rightRearDrive.setInverted(false);
         leftRearDrive.setInverted(false);
         leftFrontDrive.setInverted(false);
     }

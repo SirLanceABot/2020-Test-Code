@@ -18,11 +18,12 @@ public class MyRobot
     //private static Roller roller = Roller.getInstance();
     //private static DriverController driverController = DriverController.getInstance();
     //private static Intake intake = Intake.getInstance();
-    private static AHRS navX = new AHRS(I2C.Port.kMXP);
+    //private static AHRS navX = new AHRS(I2C.Port.kMXP);
 
     private static DriveTrain driveTrain = DriveTrain.getInstance();
 
-    private static CANSparkMax motor = new CANSparkMax(4, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
+    //private static CANSparkMax motor2 = new CANSparkMax(2, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
+    //private static CANSparkMax motor3 = new CANSparkMax(3, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
 
     private static Xbox xbox = Xbox.getInstance();
 
@@ -65,12 +66,30 @@ public class MyRobot
 
     public void teleopPeriodic()
     {
-        //move = xbox.getRawAxis(Axis.kLeftY);
-        //rotate = xbox.getRawAxis(Axis.kRightX);
+        move = -xbox.getRawAxis(Axis.kLeftY);
+        rotate = xbox.getRawAxis(Axis.kRightX);
 
-        motor.set(0.1);
+        if (Math.abs(move) <= 0.1)
+        {
+            move = 0.0;
+        }
 
-        //driveTrain.westCoastDrive(move / 10.0, rotate / 10.0, isSquared);
+        if (Math.abs(rotate) <= 0.1)
+        {
+            rotate = 0.0;
+        }
+
+        if (move < 0.0)
+        {
+            rotate *= -1;
+        }
+
+        driveTrain.westCoastDrive(move, rotate, isSquared);
+
+        //System.out.println(xbox.axisDeadzone[1]);
+
+        //motor2.set(0.1);
+        //motor3.set(0.1);
 
         //System.out.println(navX.getRawGyroX());
         //System.out.println(navX.getRawGyroY());

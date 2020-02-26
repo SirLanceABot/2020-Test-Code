@@ -18,7 +18,7 @@ public class Xbox extends Joystick
 
     public enum Axis
     {
-        kLeftX(0), kLeftY(1), kLeftTrigger(2), kRightTrigger(3), kRightX(4), kRightY(5);
+        kLeftY(1),  kRightX(4);
 
         public final int value;
 
@@ -45,16 +45,16 @@ public class Xbox extends Joystick
     // set the default axis values
     private final double DEADZONE = 0.1;
     private final double MIN_OUTPUT = 0.0;
-    private final double MAX_OUTPUT = 1.0;
+    private final double MAX_OUTPUT = 0.3;
     private final boolean IS_FLIPPED = false;
     private final AxisScale AXIS_SCALE = AxisScale.kLinear;
 
     //store the default axis values into their own array lists
-    private double[] axisDeadzone = new double[2];
-    private double[] axisMinOutput = new double[2];
-    private double[] axisMaxOutput = new double[2];
-    private boolean[] axisIsFlipped = new boolean[2];
-    private AxisScale[] axisScale = new AxisScale[2];
+    public double[] axisDeadzone = new double[6];
+    private double[] axisMinOutput = new double[6];
+    private double[] axisMaxOutput = new double[6];
+    private boolean[] axisIsFlipped = new boolean[6];
+    private AxisScale[] axisScale = new AxisScale[6];
 
     private static Xbox instance = new Xbox(0);
 
