@@ -1,17 +1,13 @@
 package frc.annika;
 
-import javax.lang.model.util.ElementScanner6;
-
-import edu.wpi.first.wpilibj.Joystick;
-
 public class MyRobot
 {
-    private static Roller roller = Roller.getInstance();
-    private static Joystick joystick = new Joystick(0);
+    private static LIDAR_Lite lidar = new LIDAR_Lite(Constants.LIDAR.PORT, Constants.LIDAR.ADDRESS);
 
     public void myRobot()
     {
         System.out.println(this.getClass().getName() + " : Started Constructor");
+
         System.out.println("*** ANNIKA's Test Code ***");
 
         System.out.println(this.getClass().getName() + " : Finished Constructor");
@@ -44,7 +40,7 @@ public class MyRobot
 
     public void teleopPeriodic()
     {
-        testRoller();
+        testLidar();
     }
 
     public void testInit()
@@ -67,19 +63,15 @@ public class MyRobot
 
     }
 
-    public void testRoller()
+    public void testLidar()
     {
-        if(joystick.getRawButton(1))
+        if(lidar.IsWorking())
         {
-            roller.intake();
-        }
-        else if(joystick.getRawButton(2))
-        {
-            roller.eject();
+            System.out.println("Lidar distance: " + lidar.GetDistance());
         }
         else
         {
-            roller.stop();
+            System.out.println("Error");
         }
     }
 }
