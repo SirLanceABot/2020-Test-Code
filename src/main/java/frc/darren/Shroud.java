@@ -1,92 +1,182 @@
 package frc.darren;
 
+import frc.darren.Port;
+
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-
-import edu.wpi.first.wpilibj.AnalogTrigger;
-import edu.wpi.first.wpilibj.Counter;
-
-// import wpilibj.Bosch;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 /**
- * Class for controlling the Shroud of the Shooter.
+ * Class for controlling the shroud 
  * @author Darren Fife
  */
 public class Shroud
 {
-    private TalonSRX motor = new TalonSRX(0);
-    private AnalogTrigger analogTrigger = new AnalogTrigger(0);
-    private Counter counter = new Counter(analogTrigger);
+    private static final String className = new String("[Shroud]");
+    
+    // Static Initializer Block
+    static
+    {
+        System.out.println(className + " : Class Loading");
+    }
 
-    private double previousSpeed = 0.0;
-    private int position = 0;
+    private static final int TIMEOUT_MS = 30;
+    private static final int UPPER_LIMIT = 1500; //TODO: Find out the upper limit
+    private static final int LOWER_LIMIT = 0;   //TODO: Find out the lower limit
+    private static final int TRENCH_SHOT = 70;
+    private static final int CLOSE_SHOT = 10;
+    private static final int TOTAL_TICKS = 100; //TODO: Find out the total ticks
+    private static final int TOTAL_DEGREES = 45; //TODO: Find the total degrees
+    private static final int PLUS_MINUS_ERROR = 5;
 
+    private static double currentAngle;
+    private static boolean isMoving = false;
+    private static TalonSRX motor = new TalonSRX(Port.Motor.CAN_SHROUD);
     private static Shroud instance = new Shroud();
 
     private Shroud()
     {
-        System.out.println(this.getClass().getName() + ": Started Constructing");
+        System.out.println(className + " : Constructor Started");
         motor.configFactoryDefault();
+        motor.setNeutralMode(NeutralMode.Brake);
         motor.configSelectedFeedbackSensor(FeedbackDevice.Analog);
-        analogTrigger.setLimitsVoltage(3.5, 3.8);   // Values higher than the highest minimum (pulse floor), lower than the lowest maximum (pulse ceiling)
-        System.out.println(this.getClass().getName() + ": Finished Constructing");
+        motor.setInverted(false); // TODO: Test this
+        motor.configForwardSoftLimitThreshold(UPPER_LIMIT);
+        motor.configForwardSoftLimitEnable(true);
+        // motor.configFeedbackNotContinuous(feedbackNotContinuous, timeoutMs)
+        motor.configReverseLimitSwitchSource(LimitSwitchSource.RemoteTalonSRX, LimitSwitchNormal.NormallyClosed);
+        
+        // motor.configClearPositionOnLimitR(clearPositionOnLimitR, timeoutMs)
+        System.out.println(className + ": Constructor Finished");
     }
 
-    protected static Shroud getInstance()
+    /**
+     * @return returns THE (1) instance of the shroud 
+     */
+    public static Shroud getInstance()
     {
         return instance;
     }
 
     /**
-     * Sets the speed of the shroud motor.
+     * the one method that sets the speed of the motor
      * @param speed
      */
     public void setSpeed(double speed)
     {
-        motor.set(ControlMode.PercentOutput, checkDirectionChange(speed));
-    }
-
-    public double checkDirectionChange(double newSpeed)
-    {
-        // Update position accumulator if changing direction
-        // Encoder doesn't know the direction so we have to remember the direction for it
-        if((previousSpeed < 0 && newSpeed >= 0) || (previousSpeed >= 0 && newSpeed < 0))
-        {
-            position = getPosition();           // Changing directions so save what we have
-            counter.reset();                    // and start counting in the new direction
-            previousSpeed = newSpeed;           // Return input speed for ease of use (may include it in the set() argument => set(checkDirectionChange(speed)))
-        }
-
-        return newSpeed;
+        motor.set(ControlMode.PercentOutput, speed);
+        setCurrentAngle();
     }
 
     /**
-     * Gets the encoder position of the shroud motor.
-     * @return
+     * Stops the motors
      */
-    public int getPosition()
+    public void stop()
     {
-        // Position from previous direction change plus what's been accumulated so far in this direction
-        if(previousSpeed >= 0)
+        setSpeed(0.0);
+    }
+
+    /**
+     * Getter function for the current angle
+     * @return the current angle of the robot
+     */
+    public double getCurrentAngle()
+    {
+        return currentAngle;
+    }
+
+    /**
+     * finds the position and sets it the instance variable to it
+     * current position is in absolute degrees
+     */
+    private void setCurrentAngle()
+    {
+        currentAngle = ((getEncoderPosition() - LOWER_LIMIT) / TOTAL_TICKS) * TOTAL_DEGREES;
+    }
+
+    /**
+     * overides whatever value is stored in the variable and stores the value to it
+     * current position is in absolute degrees
+     * @param position
+     */
+    private void setCurrentAngle(double angle)
+    {
+        currentAngle = angle;
+    }
+
+    /**
+     * converts the angle to encoder ticks
+     * @param angle
+     * @return the number of ticks corresponding to the sent angle
+     */
+    private double angleToTicks(double angle)
+    {
+        return (angle / TOTAL_DEGREES) * TOTAL_TICKS;  //need to add the calulation based on the total ticks
+    }
+
+    /**
+     * gets the encoder value
+     * @return the encoder value
+     */
+    public double getEncoderPosition()
+    {
+        return motor.getSelectedSensorPosition(0);
+    }
+
+    /**
+     * sets the shroud to the angle of the trench shot
+     */
+    private void setAngleToTrenchShot()
+    {
+        if(motor.getSelectedSensorPosition(0) < TRENCH_SHOT - PLUS_MINUS_ERROR) {setSpeed(0.5);}
+        if(motor.getSelectedSensorPosition(0) > TRENCH_SHOT + PLUS_MINUS_ERROR) {setSpeed(-0.5);}
+    }
+    
+    /**
+     * sets the shroud to the angle of the close shot
+     */
+    private void setAngleToCloseShot()
+    {
+        if(motor.getSelectedSensorPosition(0) < CLOSE_SHOT - PLUS_MINUS_ERROR) {setSpeed(0.5);}
+        if(motor.getSelectedSensorPosition(0) > CLOSE_SHOT + PLUS_MINUS_ERROR) {setSpeed(-0.5);}
+    }
+
+    /**
+     * Set the absolute position (must be within _ and _)
+     * 0 degrees is the lower limit (most likely horizontal) TODO: Find the angle of the lower limit and upper limit
+     * @param angle in degrees
+     */
+    public void moveTo(double angle)
+    {  
+        double targetPosition = angleToTicks(angle);
+        double currentPosition = angleToTicks(currentAngle);
+
+        if(currentPosition < targetPosition - PLUS_MINUS_ERROR)
         {
-            // return position + motor.getSelectedSensorPosition();    // been going forward so add counter
-            return position + counter.get();    // been going forward so add counter
+            setSpeed(0.5);
+        }
+        else if(currentPosition > targetPosition + PLUS_MINUS_ERROR)
+        {
+            setSpeed(-0.5);
         }
         else
         {
-            // return position - motor.getSelectedSensorPosition();    // been going backward so subtract counter
-            return position - counter.get();    // been going backward so subtract counter
+            stop();
         }
     }
 
-    public int getEncoderPosition()
+    /**
+     * moves relative to the current position
+     * positive to move up
+     * negative to move down
+     * @param angle in degrees
+     */
+    public void move(double angle)
     {
-        return position;
-    }
-
-    public void resetCounter()
-    {
-        counter.reset();
+        double absolute_angle = angle + currentAngle;
+        moveTo(absolute_angle);
     }
 }
