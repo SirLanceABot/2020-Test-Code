@@ -23,7 +23,7 @@ public class Roller
     private static final double kMinOutput = -1;
     private static final double maxRPM = 210;
 
-    private static CANSparkMax masterMotor = new CANSparkMax(Port.Motor.INTAKE_ROLLER, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
+    private static CANSparkMax masterMotor = new CANSparkMax(Port.Motor.CAN_INTAKE_CENTER, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
     //private static CANSparkMax slaveMotor = new CANSparkMax(SLAVE_MOTOR_ID, com.revrobotics.CANSparkMaxLowLevel.MotorType.kBrushless);
 
     private static CANEncoder encoder = masterMotor.getEncoder();
